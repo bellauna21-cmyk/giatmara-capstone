@@ -1,0 +1,93 @@
+// prisma/schema.prisma
+// Database Schema for GIATMARA SkillsHub (Ready for when you connect PostgreSQL/Supabase)
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
+}
+
+enum Role {
+  TRAINEE
+  ADMIN
+}
+
+enum AvailabilityStatus {
+  AVAILABLE
+  BUSY
+  UNAVAILABLE
+}
+
+enum PlanTier {
+  BASIC
+  PRO
+  PREMIUM
+}
+
+enum SubscriptionStatus {
+  ACTIVE
+  EXPIRED
+  PENDING_PAYMENT
+  CANCELLED
+}
+
+model User {
+  id            String          @id @default(cuid())
+  email         String          @unique
+  passwordHash  String
+  name          String
+  role          Role            @default(TRAINEE)
+  isActive      Boolean         @default(true)
+  createdAt     DateTime        @default(now())
+  updatedAt     DateTime        @updatedAt
+
+  profile       TraineeProfile?
+  subscriptions Subscription[]
+}
+
+model TraineeProfile {
+  id                  String             @id @default(cuid())
+  userId              String             @unique
+  user                User               @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  headline            String
+  bio                 String             @db.Text
+  phone               String
+  whatsappNumber      String?
+  giatmaraCenter      String
+  graduationYear      Int
+  studentId           String?
+  isVerified          Boolean            @default(false)
+
+  state               String
+  city                String
+  availability        AvailabilityStatus @default(AVAILABLE)
+  workingHours        String             @default("Mon - Sat, 9:00 AM - 6:00 PM")
+  emergencyAvailable  Boolean            @default(false)
+  startingRateRM      Decimal            @default(50.00) @db.Decimal(10, 2)
+
+  isPubliclyListed    Boolean            @default(false)
+  featuredPriority    Int                @default(0)
+
+  createdAt           DateTime           @default(now())
+  updatedAt           DateTime           @updatedAt
+}
+
+model Subscription {
+  id                String             @id @default(cuid())
+  userId            String
+  user              User               @relation(fields: [userId], references: [id], onDelete: Cascade)
+  planTier          PlanTier
+  status            SubscriptionStatus @default(PENDING_PAYMENT)
+  amountRM          Decimal            @db.Decimal(10, 2)
+  externalBillCode  String?            @unique
+  transactionRef    String?            @unique
+  startDate         DateTime?
+  endDate           DateTime?
+  createdAt         DateTime           @default(now())
+}
+
