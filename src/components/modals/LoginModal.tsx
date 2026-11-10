@@ -98,10 +98,10 @@ export function LoginModal({
             </div>
             <div>
               <h3 className="font-heading text-base font-extrabold text-slate-900">
-                Sign In to GIATMARA Portal
+                Log Masuk Warga GIATMARA
               </h3>
-              <p className="text-xs text-slate-500">
-                Trainee Studio &amp; Administrator Access
+              <p className="text-xs font-medium text-slate-500">
+                Akses Studio Pelatih Usahawan &amp; Urusetia Admin
               </p>
             </div>
           </div>
@@ -117,8 +117,8 @@ export function LoginModal({
         <div className="space-y-4 p-6">
           {/* Quick Demo Account Selector */}
           <div className="rounded-xl border border-slate-200/80 bg-slate-50 p-3.5">
-            <span className="mb-2 block text-[10px] font-bold uppercase tracking-wider text-slate-400">
-              Quick Demo Accounts (Click to Autofill)
+            <span className="mb-2 block text-[10px] font-bold uppercase tracking-wider text-slate-500">
+              Akaun Demo Pantas (Klik untuk Isi Automatik)
             </span>
             <div className="grid grid-cols-2 gap-2">
               <button
@@ -127,7 +127,7 @@ export function LoginModal({
                 className="inline-flex items-center justify-center gap-1.5 rounded-xl border border-slate-200 bg-white px-3 py-2 text-xs font-bold text-slate-700 shadow-2xs transition hover:border-[#0170B9] hover:text-[#0170B9]"
               >
                 <Wrench className="h-3.5 w-3.5 text-[#0170B9]" />
-                <span>Trainee Demo</span>
+                <span>Demo Pelatih</span>
               </button>
               <button
                 type="button"
@@ -135,7 +135,7 @@ export function LoginModal({
                 className="inline-flex items-center justify-center gap-1.5 rounded-xl border border-slate-200 bg-white px-3 py-2 text-xs font-bold text-slate-700 shadow-2xs transition hover:border-[#0170B9] hover:text-[#0170B9]"
               >
                 <ShieldCheck className="h-3.5 w-3.5 text-[#09B474]" />
-                <span>Admin Demo</span>
+                <span>Demo Admin</span>
               </button>
             </div>
           </div>
@@ -149,7 +149,7 @@ export function LoginModal({
           <form onSubmit={handleLogin} className="space-y-3.5 text-xs">
             <div>
               <label className="mb-1 block font-bold text-slate-700">
-                Email Address
+                Alamat Emel (Email Address)
               </label>
               <input
                 required
@@ -163,7 +163,7 @@ export function LoginModal({
 
             <div>
               <label className="mb-1 block font-bold text-slate-700">
-                Password
+                Kata Laluan (Password)
               </label>
               <input
                 required
@@ -180,12 +180,12 @@ export function LoginModal({
               disabled={loading}
               className="w-full rounded-xl bg-[#0170B9] py-2.5 text-xs font-bold text-white shadow-xs transition hover:bg-[#005a96]"
             >
-              {loading ? "Signing in..." : "Sign In"}
+              {loading ? "Memproses Log Masuk..." : "Log Masuk"}
             </button>
           </form>
 
           <div className="border-t border-slate-100 pt-3 text-center text-xs text-slate-500">
-            New GIATMARA trainee?{" "}
+            Pelatih baharu GIATMARA?{" "}
             <button
               type="button"
               onClick={() => {
@@ -194,7 +194,7 @@ export function LoginModal({
               }}
               className="font-bold text-[#0170B9] hover:underline"
             >
-              Create your profile
+              Daftar profil anda di sini
             </button>
           </div>
         </div>

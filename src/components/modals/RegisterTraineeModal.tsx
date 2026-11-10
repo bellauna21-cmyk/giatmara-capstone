@@ -81,10 +81,10 @@ export function RegisterTraineeModal({
             </div>
             <div>
               <h3 className="font-heading text-base font-extrabold text-slate-900">
-                Register as a GIATMARA Trainee
+                Pendaftaran Pelatih Baharu GIATMARA
               </h3>
-              <p className="text-xs text-slate-500">
-                Create your public skill profile for the Malaysian directory
+              <p className="text-xs font-medium text-slate-500">
+                Cipta profil kemahiran awam anda untuk direktori TVET
               </p>
             </div>
           </div>
