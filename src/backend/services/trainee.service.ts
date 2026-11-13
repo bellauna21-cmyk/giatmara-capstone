@@ -6,9 +6,10 @@ import { TraineeSearchParams } from "../validators/trainee.validator";
 import { TraineeListing, PlanTier } from "@/lib/giatmara-data";
 
 const TIER_PRIORITY: Record<PlanTier, number> = {
-  PREMIUM: 3,
-  PRO: 2,
-  BASIC: 1,
+  PREMIUM: 4,
+  PRO: 3,
+  BASIC: 2,
+  TRIAL: 1,
 };
 
 export const TraineeService = {

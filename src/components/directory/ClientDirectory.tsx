@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useMemo, useEffect } from "react";
+import React, { useState, useMemo } from "react";
 import {
   Search,
   MapPin,
@@ -8,89 +8,110 @@ import {
   RotateCcw,
   Clock,
   Zap,
-  CheckCircle2,
-  ShieldCheck,
+  ShieldAlert,
   Users,
-  SlidersHorizontal,
+  Snowflake,
+  Droplets,
+  Car,
+  Bike,
+  Flame,
+  Scissors,
+  UtensilsCrossed,
+  Sparkles,
+  Laptop,
+  LayoutGrid,
 } from "lucide-react";
 import {
-  GIATMARA_SKILLS,
   MALAYSIA_STATES,
+  MALAYSIA_DISTRICTS_BY_STATE,
   TraineeListing,
 } from "@/lib/giatmara-data";
 import { TraineeCard } from "./TraineeCard";
+import { usePlatform } from "@/context/PlatformContext";
+import { TRANSLATIONS } from "@/lib/i18n";
 
 interface ClientDirectoryProps {
   trainees: TraineeListing[];
   onSelectTrainee: (trainee: TraineeListing) => void;
 }
 
-const SHOWCASE_SLIDES = [
-  {
-    image:
-      "https://giatmara.edu.my/wp-content/uploads/2022/07/Slider-1_1024x600.jpg.webp",
-    caption: "Certified TVET Specialists Across 232 GIATMARA Campuses",
-    tag: "Kemahiran Pilihan Pertama",
-  },
-  {
-    image: "https://giatmara.edu.my/wp-content/uploads/2022/07/Slider-02.jpg",
-    caption: "SKM & Suruhanjaya Tenaga (PW2/PW4) Accredited Graduates",
-    tag: "Verified Competency",
-  },
-  {
-    image: "https://giatmara.edu.my/wp-content/uploads/2022/07/Slider-03.jpg",
-    caption: "Empowering Local Technical Entrepreneurs Nationwide",
-    tag: "Direktori Usahawan MARA",
-  },
-];
+const SKILL_ICON_MAP: Record<string, React.ComponentType<{ className?: string }>> = {
+  Zap,
+  Snowflake,
+  Droplets,
+  Car,
+  Bike,
+  Flame,
+  Scissors,
+  UtensilsCrossed,
+  Sparkles,
+  Laptop,
+  Wrench,
+};
 
 export function ClientDirectory({
   trainees = [],
   onSelectTrainee,
 }: ClientDirectoryProps) {
+  const { language, skillsList } = usePlatform();
+  const t = TRANSLATIONS[language];
+
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedSkill, setSelectedSkill] = useState("ALL");
   const [selectedState, setSelectedState] = useState("ALL");
+  const [selectedDistrict, setSelectedDistrict] = useState("ALL");
   const [onlyAvailableNow, setOnlyAvailableNow] = useState(false);
   const [onlyEmergency, setOnlyEmergency] = useState(false);
-  const [activeSlide, setActiveSlide] = useState(0);
 
-  useEffect(() => {
-    const timer = setInterval(() => {
-      setActiveSlide((prev) => (prev + 1) % SHOWCASE_SLIDES.length);
-    }, 5500);
-    return () => clearInterval(timer);
-  }, []);
+  const availableDistricts = useMemo(() => {
+    if (selectedState === "ALL") {
+      return Object.values(MALAYSIA_DISTRICTS_BY_STATE).flat();
+    }
+    return MALAYSIA_DISTRICTS_BY_STATE[selectedState] || [];
+  }, [selectedState]);
 
   const filteredTrainees = useMemo(() => {
-    const tierPriority = { PREMIUM: 3, PRO: 2, BASIC: 1 };
+    const tierPriority = { PREMIUM: 4, PRO: 3, BASIC: 2, TRIAL: 1 };
 
     return trainees
-      .filter((t) => {
-        if (!t.isPubliclyListed) return false;
-        if (selectedState !== "ALL" && t.state !== selectedState) return false;
-        if (selectedSkill !== "ALL" && !t.skills.includes(selectedSkill))
+      .filter((tr) => {
+        if (!tr.isPubliclyListed) return false;
+        if (tr.isAccountActive === false) return false;
+        if (selectedState !== "ALL" && tr.state !== selectedState) return false;
+        if (
+          selectedDistrict !== "ALL" &&
+          tr.district !== selectedDistrict &&
+          !tr.city.toLowerCase().includes(selectedDistrict.toLowerCase())
+        ) {
           return false;
-        if (onlyAvailableNow && t.availability !== "AVAILABLE") return false;
-        if (onlyEmergency && !t.emergencyAvailable) return false;
+        }
+        if (selectedSkill !== "ALL" && !tr.skills.includes(selectedSkill))
+          return false;
+        if (onlyAvailableNow && tr.availability !== "AVAILABLE") return false;
+        if (onlyEmergency && !tr.emergencyAvailable) return false;
 
         if (searchQuery.trim() !== "") {
           const q = searchQuery.toLowerCase();
           return (
-            t.name.toLowerCase().includes(q) ||
-            t.headline.toLowerCase().includes(q) ||
-            t.city.toLowerCase().includes(q) ||
-            t.giatmaraCenter.toLowerCase().includes(q)
+            tr.name.toLowerCase().includes(q) ||
+            tr.headline.toLowerCase().includes(q) ||
+            (tr.district || "").toLowerCase().includes(q) ||
+            tr.city.toLowerCase().includes(q) ||
+            tr.state.toLowerCase().includes(q)
           );
         }
         return true;
       })
-      .sort((a, b) => tierPriority[b.planTier] - tierPriority[a.planTier]);
+      .sort(
+        (a, b) =>
+          (tierPriority[b.planTier] || 1) - (tierPriority[a.planTier] || 1)
+      );
   }, [
     trainees,
     searchQuery,
     selectedSkill,
     selectedState,
+    selectedDistrict,
     onlyAvailableNow,
     onlyEmergency,
   ]);
@@ -99,6 +120,7 @@ export function ClientDirectory({
     setSearchQuery("");
     setSelectedSkill("ALL");
     setSelectedState("ALL");
+    setSelectedDistrict("ALL");
     setOnlyAvailableNow(false);
     setOnlyEmergency(false);
   };
@@ -107,166 +129,163 @@ export function ClientDirectory({
     searchQuery.trim() !== "" ||
     selectedSkill !== "ALL" ||
     selectedState !== "ALL" ||
+    selectedDistrict !== "ALL" ||
     onlyAvailableNow ||
     onlyEmergency;
 
-  const slide = SHOWCASE_SLIDES[activeSlide];
-
   return (
     <div className="pb-16">
-      {/* 1. Modern Split Bento Hero Section */}
-      <section className="relative overflow-hidden border-b border-slate-200/80 bg-white pt-8 pb-14 lg:pt-12 lg:pb-16">
-        {/* Subtle Ambient Background Accent */}
-        <div className="pointer-events-none absolute -top-40 right-0 h-96 w-96 rounded-full bg-[#0170B9]/5 blur-3xl" />
-        <div className="pointer-events-none absolute bottom-0 left-10 h-72 w-72 rounded-full bg-[#09B474]/5 blur-3xl" />
+      {/* 1. COMPACT 1-2 LINE HERO + VISUAL SKILL ICON GRID (NO LONG SCROLLING) */}
+      <section className="border-b border-slate-200/80 bg-white pt-5 pb-6 sm:pt-7 sm:pb-8">
+        <div className="mx-auto max-w-7xl px-3 sm:px-6 lg:px-8">
+          {/* 1-2 Line Direct Headline */}
+          <div className="text-center sm:text-left">
+            <h1 className="font-heading text-xl font-extrabold tracking-tight text-slate-900 sm:text-2xl lg:text-3xl">
+              {t.heroHeadline}
+            </h1>
+            <p className="mt-1 text-xs font-medium text-slate-500 sm:text-sm">
+              {t.heroSubline}
+            </p>
+          </div>
 
-        <div className="relative mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-          <div className="grid grid-cols-1 items-center gap-10 lg:grid-cols-12">
-            {/* Left 7 Columns: Modern Typography & Value Prop */}
-            <div className="lg:col-span-7">
-              <div className="inline-flex items-center gap-2 rounded-full border border-[#0170B9]/20 bg-[#0170B9]/5 px-3.5 py-1.5 text-xs font-bold text-[#0170B9]">
-                <span className="h-2 w-2 rounded-full bg-[#09B474]" />
-                <span>Official GIATMARA Malaysia Skill Directory</span>
-              </div>
-
-              <h1 className="mt-5 font-heading text-4xl font-extrabold leading-[1.12] tracking-tight text-slate-900 sm:text-5xl">
-                Hire verified{" "}
-                <span className="text-[#0170B9]">GIATMARA specialists</span>{" "}
-                directly in your area.
-              </h1>
-
-              <p className="mt-4 max-w-xl text-base leading-relaxed text-slate-600">
-                Connect with accredited TVET graduates and technical
-                entrepreneurs for electrical wiring (PW2/PW4), air-conditioning,
-                plumbing, welding, automotive, and tailoring—with zero
-                commission fees.
-              </p>
-
-              {/* Trust Highlights + Pilihan Pertama Emblem */}
-              <div className="mt-7 flex flex-wrap items-center gap-6">
-                <img
-                  src="https://giatmara.edu.my/wp-content/uploads/2022/07/Pilihan-withoutFont-1024x317.png.webp"
-                  alt="Kemahiran Pilihan Pertama"
-                  className="h-10 w-auto object-contain"
-                />
-
-                <div className="flex flex-wrap items-center gap-4 border-l border-slate-200 pl-6 text-xs font-semibold text-slate-600">
-                  <span className="inline-flex items-center gap-1.5">
-                    <CheckCircle2 className="h-4 w-4 text-[#09B474]" />
-                    Matrix ID Verified
-                  </span>
-                  <span className="inline-flex items-center gap-1.5">
-                    <ShieldCheck className="h-4 w-4 text-[#0170B9]" />
-                    Direct WhatsApp Deal
-                  </span>
-                </div>
-              </div>
+          {/* Interactive Skill Icon Grid */}
+          <div className="mt-4 sm:mt-5">
+            <div className="mb-2.5 flex items-center justify-between">
+              <span className="text-[11px] font-extrabold uppercase tracking-wider text-slate-400">
+                {t.chooseSkillTitle}
+              </span>
+              {selectedSkill !== "ALL" && (
+                <button
+                  type="button"
+                  onClick={() => setSelectedSkill("ALL")}
+                  className="text-xs font-bold text-[#0170B9] hover:underline"
+                >
+                  {t.allSkills}
+                </button>
+              )}
             </div>
 
-            {/* Right 5 Columns: Modern Bento Showcase Card */}
-            <div className="lg:col-span-5">
-              <div className="relative overflow-hidden rounded-3xl border border-slate-200/80 bg-slate-900 shadow-xl">
-                <div className="relative h-72 sm:h-80">
-                  <img
-                    src={slide.image}
-                    alt={slide.caption}
-                    className="h-full w-full object-cover opacity-90 transition-all duration-700"
-                  />
-                  <div className="absolute inset-0 bg-gradient-to-t from-slate-950/90 via-slate-950/30 to-transparent" />
+            <div className="grid grid-cols-2 gap-2 sm:grid-cols-3 md:grid-cols-5 lg:grid-cols-6">
+              {/* "Semua Kemahiran" Tile */}
+              <button
+                type="button"
+                onClick={() => setSelectedSkill("ALL")}
+                className={`flex items-center gap-2.5 rounded-xl border p-2.5 text-left transition-all sm:flex-col sm:items-start sm:p-3 ${
+                  selectedSkill === "ALL"
+                    ? "border-[#0170B9] bg-[#0170B9] text-white shadow-sm"
+                    : "border-slate-200/90 bg-slate-50/70 text-slate-700 hover:border-[#0170B9]/40 hover:bg-white"
+                }`}
+              >
+                <div
+                  className={`flex h-9 w-9 shrink-0 items-center justify-center rounded-lg ${
+                    selectedSkill === "ALL"
+                      ? "bg-white/20 text-white"
+                      : "bg-[#0170B9]/10 text-[#0170B9]"
+                  }`}
+                >
+                  <LayoutGrid className="h-4 w-4" />
+                </div>
+                <div className="min-w-0">
+                  <p className="truncate text-xs font-extrabold">
+                    {t.allSkills}
+                  </p>
+                  <p
+                    className={`truncate text-[10px] ${
+                      selectedSkill === "ALL"
+                        ? "text-blue-100"
+                        : "text-slate-400"
+                    }`}
+                  >
+                    {trainees.filter((x) => x.isPubliclyListed && x.isAccountActive !== false).length}{" "}
+                    {language === "ms" ? "Pakar" : "Experts"}
+                  </p>
+                </div>
+              </button>
 
-                  {/* Top Floating Pill */}
-                  <div className="absolute top-4 left-4 right-4 flex items-center justify-between">
-                    <span className="rounded-full bg-white/90 px-3 py-1 text-[11px] font-extrabold text-[#0170B9] shadow-xs backdrop-blur-md">
-                      {slide.tag}
-                    </span>
+              {/* Individual Visual Skill Icon Cards */}
+              {skillsList.map((skill) => {
+                const active = selectedSkill === skill.slug;
+                const IconComponent =
+                  SKILL_ICON_MAP[skill.iconName] || Wrench;
 
-                    <div className="flex items-center gap-1.5 rounded-full bg-black/40 px-2.5 py-1.5 backdrop-blur-md">
-                      {SHOWCASE_SLIDES.map((_, idx) => (
-                        <button
-                          key={idx}
-                          onClick={() => setActiveSlide(idx)}
-                          className={`h-1.5 rounded-full transition-all ${
-                            idx === activeSlide
-                              ? "w-5 bg-[#09B474]"
-                              : "w-1.5 bg-white/50"
-                          }`}
-                          aria-label={`Slide ${idx + 1}`}
-                        />
-                      ))}
+                return (
+                  <button
+                    type="button"
+                    key={skill.id}
+                    onClick={() =>
+                      setSelectedSkill(active ? "ALL" : skill.slug)
+                    }
+                    className={`flex items-center gap-2.5 rounded-xl border p-2.5 text-left transition-all sm:flex-col sm:items-start sm:p-3 ${
+                      active
+                        ? "border-[#0170B9] bg-[#0170B9] text-white shadow-sm"
+                        : "border-slate-200/90 bg-white text-slate-800 hover:border-[#0170B9]/50 hover:shadow-xs"
+                    }`}
+                  >
+                    <div
+                      className={`flex h-9 w-9 shrink-0 items-center justify-center rounded-lg ${
+                        active
+                          ? "bg-white/20 text-white"
+                          : "bg-[#0170B9]/10 text-[#0170B9]"
+                      }`}
+                    >
+                      <IconComponent className="h-4 w-4" />
                     </div>
-                  </div>
-
-                  {/* Bottom Glassmorphic Info & 24/7 Emergency Switch */}
-                  <div className="absolute right-4 bottom-4 left-4 space-y-3">
-                    <p className="font-heading text-sm font-bold text-white">
-                      {slide.caption}
-                    </p>
-
-                    <div className="flex items-center justify-between rounded-2xl border border-white/15 bg-white/10 p-3 backdrop-blur-md">
-                      <div className="flex items-center gap-2.5">
-                        <div className="flex h-8 w-8 items-center justify-center rounded-xl bg-rose-500 text-white">
-                          <Zap className="h-4 w-4" />
-                        </div>
-                        <div>
-                          <p className="text-xs font-bold text-white">
-                            24/7 Emergency Callout
-                          </p>
-                          <p className="text-[11px] text-slate-300">
-                            Urgent wiring, pipe burst &amp; breakdown
-                          </p>
-                        </div>
-                      </div>
-
-                      <button
-                        onClick={() => setOnlyEmergency(!onlyEmergency)}
-                        className={`rounded-xl px-3.5 py-2 text-xs font-extrabold transition ${
-                          onlyEmergency
-                            ? "bg-[#FCB900] text-slate-950 shadow-xs"
-                            : "bg-white text-slate-900 hover:bg-slate-100"
+                    <div className="min-w-0 w-full">
+                      <p className="line-clamp-1 text-xs font-extrabold">
+                        {language === "ms"
+                          ? skill.shortMalay || skill.malayName
+                          : skill.shortEn || skill.name}
+                      </p>
+                      <p
+                        className={`line-clamp-1 text-[10px] ${
+                          active ? "text-blue-100" : "text-slate-400"
                         }`}
                       >
-                        {onlyEmergency ? "Active (24/7)" : "Filter 24/7"}
-                      </button>
+                        {language === "ms" ? skill.malayName : skill.name}
+                      </p>
                     </div>
-                  </div>
-                </div>
-              </div>
+                  </button>
+                );
+              })}
             </div>
           </div>
 
-          {/* 2. Modern Elevated Search Command Bar */}
-          <div className="mt-10 rounded-2xl border border-slate-200/90 bg-white p-2 shadow-[0_8px_30px_rgb(0,0,0,0.05)]">
-            <div className="grid grid-cols-1 divide-y divide-slate-100 md:grid-cols-12 md:divide-x md:divide-y-0">
-              {/* Keyword Input */}
-              <div className="flex items-center gap-3 px-4 py-3 md:col-span-5">
-                <Search className="h-5 w-5 shrink-0 text-[#0170B9]" />
+          {/* 2. STATE (NEGERI), DISTRICT (DAERAH) & KEYWORD FILTER BAR */}
+          <div className="mt-4 rounded-2xl border border-slate-200 bg-slate-50/70 p-2.5 shadow-2xs sm:p-3">
+            <div className="grid grid-cols-1 gap-2.5 md:grid-cols-12">
+              {/* Keyword Search */}
+              <div className="flex items-center gap-2.5 rounded-xl border border-slate-200 bg-white px-3.5 py-2 md:col-span-4">
+                <Search className="h-4 w-4 shrink-0 text-[#0170B9]" />
                 <div className="w-full">
                   <label className="block text-[10px] font-bold uppercase tracking-wider text-slate-400">
-                    What service do you need?
+                    {t.searchLabel}
                   </label>
                   <input
                     type="text"
                     value={searchQuery}
                     onChange={(e) => setSearchQuery(e.target.value)}
-                    placeholder="Search wireman, aircond, Shah Alam, Ipoh..."
-                    className="mt-0.5 w-full bg-transparent text-sm font-semibold text-slate-900 placeholder:font-normal placeholder:text-slate-400 focus:outline-none"
+                    placeholder={t.searchPlaceholder}
+                    className="w-full bg-transparent text-xs font-semibold text-slate-900 placeholder:font-normal placeholder:text-slate-400 focus:outline-none"
                   />
                 </div>
               </div>
 
-              {/* State Select */}
-              <div className="flex items-center gap-3 px-4 py-3 md:col-span-3">
-                <MapPin className="h-5 w-5 shrink-0 text-[#09B474]" />
+              {/* State (Negeri) Filter */}
+              <div className="flex items-center gap-2.5 rounded-xl border border-slate-200 bg-white px-3.5 py-2 md:col-span-4">
+                <MapPin className="h-4 w-4 shrink-0 text-[#09B474]" />
                 <div className="w-full">
                   <label className="block text-[10px] font-bold uppercase tracking-wider text-slate-400">
-                    State (Negeri)
+                    {t.stateLabel}
                   </label>
                   <select
                     value={selectedState}
-                    onChange={(e) => setSelectedState(e.target.value)}
-                    className="mt-0.5 w-full cursor-pointer bg-transparent text-sm font-bold text-slate-900 focus:outline-none"
+                    onChange={(e) => {
+                      setSelectedState(e.target.value);
+                      setSelectedDistrict("ALL");
+                    }}
+                    className="w-full cursor-pointer bg-transparent text-xs font-bold text-slate-900 focus:outline-none"
                   >
-                    <option value="ALL">All States in Malaysia</option>
+                    <option value="ALL">{t.allStates}</option>
                     {MALAYSIA_STATES.map((st) => (
                       <option key={st} value={st}>
                         {st}
@@ -276,141 +295,113 @@ export function ClientDirectory({
                 </div>
               </div>
 
-              {/* Skill Cluster Select */}
-              <div className="flex items-center gap-3 px-4 py-3 md:col-span-4">
-                <Wrench className="h-5 w-5 shrink-0 text-[#0170B9]" />
+              {/* District (Daerah) Filter */}
+              <div className="flex items-center gap-2.5 rounded-xl border border-slate-200 bg-white px-3.5 py-2 md:col-span-4">
+                <MapPin className="h-4 w-4 shrink-0 text-[#0170B9]" />
                 <div className="w-full">
                   <label className="block text-[10px] font-bold uppercase tracking-wider text-slate-400">
-                    TVET Skill Cluster
+                    {t.districtLabel}
                   </label>
                   <select
-                    value={selectedSkill}
-                    onChange={(e) => setSelectedSkill(e.target.value)}
-                    className="mt-0.5 w-full cursor-pointer bg-transparent text-sm font-bold text-slate-900 focus:outline-none"
+                    value={selectedDistrict}
+                    onChange={(e) => setSelectedDistrict(e.target.value)}
+                    className="w-full cursor-pointer bg-transparent text-xs font-bold text-slate-900 focus:outline-none"
                   >
-                    <option value="ALL">All GIATMARA Trades</option>
-                    {GIATMARA_SKILLS.map((sk) => (
-                      <option key={sk.id} value={sk.slug}>
-                        {sk.name}
+                    <option value="ALL">{t.allDistricts}</option>
+                    {availableDistricts.map((dist) => (
+                      <option key={dist} value={dist}>
+                        {dist}
                       </option>
                     ))}
                   </select>
                 </div>
               </div>
             </div>
+
+            {/* Quick Status Filters Row */}
+            <div className="mt-2.5 flex flex-wrap items-center justify-between gap-2 pt-1">
+              <div className="flex flex-wrap items-center gap-2">
+                <button
+                  type="button"
+                  onClick={() => setOnlyAvailableNow(!onlyAvailableNow)}
+                  className={`inline-flex items-center gap-1.5 rounded-xl px-3 py-1.5 text-xs font-bold transition ${
+                    onlyAvailableNow
+                      ? "bg-[#09B474] text-white shadow-2xs"
+                      : "border border-slate-200 bg-white text-slate-700 hover:bg-slate-100"
+                  }`}
+                >
+                  <Clock className="h-3.5 w-3.5" />
+                  <span>{t.availableNowFilter}</span>
+                </button>
+
+                <button
+                  type="button"
+                  onClick={() => setOnlyEmergency(!onlyEmergency)}
+                  className={`inline-flex items-center gap-1.5 rounded-xl px-3 py-1.5 text-xs font-bold transition ${
+                    onlyEmergency
+                      ? "bg-rose-600 text-white shadow-2xs"
+                      : "border border-slate-200 bg-white text-slate-700 hover:bg-slate-100"
+                  }`}
+                >
+                  <Zap className="h-3.5 w-3.5" />
+                  <span>{t.emergencyFilter}</span>
+                </button>
+
+                {hasActiveFilters && (
+                  <button
+                    type="button"
+                    onClick={resetFilters}
+                    className="inline-flex items-center gap-1 rounded-xl bg-rose-50 px-3 py-1.5 text-xs font-bold text-rose-600 hover:bg-rose-100"
+                  >
+                    <RotateCcw className="h-3.5 w-3.5" />
+                    <span>{t.resetFilter}</span>
+                  </button>
+                )}
+              </div>
+
+              <span className="text-xs font-semibold text-slate-500">
+                {t.showingResults}{" "}
+                <strong className="text-slate-900">
+                  {filteredTrainees.length}
+                </strong>{" "}
+                {t.expertsCountLabel}
+              </span>
+            </div>
+          </div>
+
+          {/* 3. SAFETY PRECAUTION BANNER (JUMPA SEBELUM BAYAR) */}
+          <div className="mt-3.5 flex items-start gap-2.5 rounded-xl border border-amber-300/90 bg-amber-50/90 px-3.5 py-2.5 text-xs text-amber-900">
+            <ShieldAlert className="mt-0.5 h-4 w-4 shrink-0 text-amber-600" />
+            <p className="leading-relaxed">
+              <strong className="font-extrabold">{t.safetyBannerTitle}</strong>{" "}
+              {t.safetyBannerDesc}
+            </p>
           </div>
         </div>
       </section>
 
-      {/* 3. Filter Pills & Directory Grid */}
-      <div className="mx-auto mt-8 max-w-7xl px-4 sm:px-6 lg:px-8">
-        {/* Horizontal Skill & Status Bar */}
-        <div className="flex flex-wrap items-center justify-between gap-4">
-          <div className="flex items-center gap-2 overflow-x-auto pb-1">
-            <button
-              onClick={() => setSelectedSkill("ALL")}
-              className={`shrink-0 rounded-xl px-3.5 py-2 text-xs font-bold transition ${
-                selectedSkill === "ALL"
-                  ? "bg-[#0170B9] text-white shadow-xs"
-                  : "border border-slate-200/90 bg-white text-slate-600 hover:border-slate-300 hover:text-slate-900"
-              }`}
-            >
-              All Trades
-            </button>
-            {GIATMARA_SKILLS.map((skill) => {
-              const active = selectedSkill === skill.slug;
-              return (
-                <button
-                  key={skill.id}
-                  onClick={() => setSelectedSkill(active ? "ALL" : skill.slug)}
-                  className={`shrink-0 rounded-xl px-3.5 py-2 text-xs font-semibold transition ${
-                    active
-                      ? "bg-[#0170B9] text-white shadow-xs"
-                      : "border border-slate-200/90 bg-white text-slate-600 hover:border-slate-300 hover:text-slate-900"
-                  }`}
-                >
-                  {skill.malayName}
-                </button>
-              );
-            })}
-          </div>
-
-          <div className="flex items-center gap-2">
-            <button
-              onClick={() => setOnlyAvailableNow(!onlyAvailableNow)}
-              className={`inline-flex items-center gap-1.5 rounded-xl px-3.5 py-2 text-xs font-bold transition ${
-                onlyAvailableNow
-                  ? "bg-[#09B474] text-white shadow-xs"
-                  : "border border-slate-200 bg-white text-slate-700 hover:bg-slate-50"
-              }`}
-            >
-              <Clock className="h-3.5 w-3.5" />
-              <span>Available Now</span>
-            </button>
-
-            <button
-              onClick={() => setOnlyEmergency(!onlyEmergency)}
-              className={`inline-flex items-center gap-1.5 rounded-xl px-3.5 py-2 text-xs font-bold transition ${
-                onlyEmergency
-                  ? "bg-rose-600 text-white shadow-xs"
-                  : "border border-slate-200 bg-white text-slate-700 hover:bg-slate-50"
-              }`}
-            >
-              <Zap className="h-3.5 w-3.5" />
-              <span>24/7 Emergency</span>
-            </button>
-
-            {hasActiveFilters && (
-              <button
-                onClick={resetFilters}
-                className="inline-flex items-center gap-1 rounded-xl px-3 py-2 text-xs font-bold text-rose-600 hover:bg-rose-50"
-              >
-                <RotateCcw className="h-3.5 w-3.5" />
-                <span>Reset</span>
-              </button>
-            )}
-          </div>
-        </div>
-
-        {/* Results Count Header */}
-        <div className="mt-8 flex items-center justify-between">
-          <div>
-            <h2 className="font-heading text-xl font-extrabold text-slate-900">
-              Verified Service Providers
-            </h2>
-            <p className="text-xs text-slate-500">
-              Showing {filteredTrainees.length} active GIATMARA trainees &amp;
-              entrepreneurs
-            </p>
-          </div>
-
-          <div className="hidden items-center gap-1.5 text-xs font-medium text-slate-500 sm:flex">
-            <SlidersHorizontal className="h-3.5 w-3.5 text-[#0170B9]" />
-            <span>Sorted by Featured Tier &amp; Verification</span>
-          </div>
-        </div>
-
-        {/* Cards Grid */}
+      {/* 4. SPECIALIST DIRECTORY CARDS GRID */}
+      <div className="mx-auto mt-6 max-w-7xl px-3 sm:px-6 lg:px-8">
         {filteredTrainees.length === 0 ? (
-          <div className="mt-6 rounded-3xl border border-slate-200/80 bg-white p-14 text-center shadow-xs">
+          <div className="rounded-2xl border border-slate-200/80 bg-white p-10 text-center shadow-xs">
             <Users className="mx-auto h-10 w-10 text-slate-300" />
             <h3 className="mt-3 font-heading text-base font-bold text-slate-900">
-              No trainees match your current filters
+              {t.noResultsTitle}
             </h3>
             <p className="mx-auto mt-1 max-w-sm text-xs text-slate-500">
-              Try selecting another state or clearing the active search filters
-              to see all listed GIATMARA specialists.
+              {t.noResultsDesc}
             </p>
             <button
+              type="button"
               onClick={resetFilters}
-              className="mt-5 inline-flex items-center gap-1.5 rounded-xl bg-[#0170B9] px-4 py-2.5 text-xs font-bold text-white shadow-xs hover:bg-[#005a96]"
+              className="mt-4 inline-flex items-center gap-1.5 rounded-xl bg-[#0170B9] px-4 py-2.5 text-xs font-bold text-white shadow-xs hover:bg-[#005a96]"
             >
               <RotateCcw className="h-3.5 w-3.5" />
-              Reset All Filters
+              {t.resetFilter}
             </button>
           </div>
         ) : (
-          <div className="mt-6 grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
+          <div className="grid grid-cols-1 gap-4 sm:gap-5 md:grid-cols-2 lg:grid-cols-3">
             {filteredTrainees.map((trainee) => (
               <TraineeCard
                 key={trainee.id}

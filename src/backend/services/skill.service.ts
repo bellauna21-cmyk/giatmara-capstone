@@ -1,5 +1,4 @@
 // src/backend/services/skill.service.ts
-// Official GIATMARA TVET Skill Catalog Management
 
 import { ServerStore } from "./store";
 import { GiatmaraSkill } from "@/lib/giatmara-data";
@@ -20,8 +19,11 @@ export const SkillService = {
       id: `sk-${Date.now()}`,
       name: name.trim(),
       malayName: name.trim(),
+      shortMalay: name.trim(),
+      shortEn: name.trim(),
       cluster: cluster.trim() || "Kemahiran Teknikal",
       slug,
+      iconName: "Wrench",
     };
 
     ServerStore.setSkills([...skills, newSkill]);
@@ -37,4 +39,3 @@ export const SkillService = {
     return true;
   },
 };
-

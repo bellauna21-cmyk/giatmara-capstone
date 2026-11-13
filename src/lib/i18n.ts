@@ -1,0 +1,101 @@
+// src/lib/i18n.ts
+
+export type Language = "ms" | "en";
+
+export const TRANSLATIONS = {
+  ms: {
+    brandTitle: "Direktori Pakar Kemahiran",
+    brandSubtitle: "Rangkaian Tenaga Mahir Bertauliah Malaysia",
+    navExplore: "Cari Pakar",
+    navExpertPanel: "Panel Pakar",
+    navDirectory: "Direktori",
+    signIn: "Log Masuk",
+    signOut: "Log Keluar",
+    registerExpert: "Daftar Pakar",
+    heroHeadline:
+      "Cari & Hubungi Terus Pakar Kemahiran Bertauliah Di Daerah Anda.",
+    heroSubline:
+      "Pilih bidang kemahiran di bawah untuk berhubung terus dengan tenaga mahir berpengalaman tanpa caj orang tengah.",
+    safetyBannerTitle: "Peringatan Keselamatan Pelanggan:",
+    safetyBannerDesc:
+      "Sila berjumpa secara bersemuka, periksa kerja/kerosakan, dan sahkan identiti pakar terlebih dahulu sebelum membuat sebarang bayaran bagi mengelakkan penipuan (scam).",
+    chooseSkillTitle: "Pilih Bidang Kemahiran (Klik Ikon Untuk Tapis):",
+    allSkills: "Semua Kemahiran",
+    searchLabel: "Carian Kata Kunci / Nama / Kemahiran",
+    searchPlaceholder: "Contoh: pendawaian, aircond, paip, kimpalan...",
+    stateLabel: "Negeri",
+    allStates: "Semua Negeri",
+    districtLabel: "Daerah",
+    allDistricts: "Semua Daerah",
+    availableNowFilter: "Sedia Sekarang",
+    emergencyFilter: "Kecemasan 24/7",
+    resetFilter: "Set Semula",
+    showingResults: "Memaparkan",
+    expertsCountLabel: "pakar kemahiran aktif",
+    noResultsTitle: "Tiada pakar ditemui untuk tapisan ini",
+    noResultsDesc:
+      "Sila pilih negeri/daerah lain atau klik Set Semula untuk melihat semua pakar kemahiran.",
+    cardGeneralSkill: "Kemahiran Umum",
+    cardAvailableTime: "Waktu & Hari Operasi",
+    cardExpertNamePhone: "Pakar & No. Telefon",
+    cardCertExp: "Sijil & Pengalaman",
+    cardRateLabel: "Kadar Harga",
+    cardRateConfidential: "Sulit (Bincang Ikut Skop Kerja)",
+    cardYearsExp: "Tahun Pengalaman",
+    cardViewProfile: "Lihat Profil Detail",
+    cardWhatsapp: "WhatsApp",
+    statusAvailable: "Sedia Menerima Kerja",
+    statusBusy: "Jadual Penuh Hari Ini",
+    statusAway: "Tidak Aktif / Berehat",
+    agencyPermissionNote:
+      "Penyertaan terbuka kepada pakar kemahiran lepasan TVET (GIATMARA, IKM, KKTM, ILP & setaraf). Penggunaan logo rasmi agensi tertakluk kepada kebenaran bertulis agensi berkaitan.",
+  },
+  en: {
+    brandTitle: "Skilled Specialist Directory",
+    brandSubtitle: "Malaysia Certified Technical Professionals Network",
+    navExplore: "Find Experts",
+    navExpertPanel: "Expert Panel",
+    navDirectory: "Directory",
+    signIn: "Sign In",
+    signOut: "Log Out",
+    registerExpert: "Join as Expert",
+    heroHeadline:
+      "Find & Contact Certified Skilled Specialists Directly in Your District.",
+    heroSubline:
+      "Select a skill icon below to connect directly with experienced working professionals with zero middleman fees.",
+    safetyBannerTitle: "Client Safety Precaution:",
+    safetyBannerDesc:
+      "Always meet the specialist in person, inspect the job scope, and verify their work before making any payment to avoid scams.",
+    chooseSkillTitle: "Select a Skill Category (Click Icon to Filter):",
+    allSkills: "All Skills",
+    searchLabel: "Keyword / Name / Skill Search",
+    searchPlaceholder: "e.g. wiring, aircond, plumbing, welding...",
+    stateLabel: "State (Negeri)",
+    allStates: "All States",
+    districtLabel: "District (Daerah)",
+    allDistricts: "All Districts",
+    availableNowFilter: "Available Now",
+    emergencyFilter: "24/7 Emergency",
+    resetFilter: "Reset",
+    showingResults: "Showing",
+    expertsCountLabel: "active skilled specialists",
+    noResultsTitle: "No specialists match your current filters",
+    noResultsDesc:
+      "Try selecting another state/district or reset filters to view all listed specialists.",
+    cardGeneralSkill: "General Skills",
+    cardAvailableTime: "Available Days & Hours",
+    cardExpertNamePhone: "Specialist & Phone No.",
+    cardCertExp: "Certificates & Experience",
+    cardRateLabel: "Service Rate",
+    cardRateConfidential: "Confidential (Quote by Scope)",
+    cardYearsExp: "Years Experience",
+    cardViewProfile: "View Full Profile",
+    cardWhatsapp: "WhatsApp",
+    statusAvailable: "Available Now",
+    statusBusy: "Booked Today",
+    statusAway: "Away / Offline",
+    agencyPermissionNote:
+      "Open to certified TVET working professionals (GIATMARA, IKM, KKTM, ILP & equivalent). Official agency logos are subject to formal agency permission.",
+  },
+};
+

@@ -15,10 +15,12 @@ import { AdminConsole } from "@/components/admin/AdminConsole";
 import { TraineeDetailModal } from "@/components/modals/TraineeDetailModal";
 import { RegisterTraineeModal } from "@/components/modals/RegisterTraineeModal";
 import { LoginModal } from "@/components/modals/LoginModal";
-import { ToyyibPayModal } from "@/components/modals/ToyyibPayModal";
+import { ManualQrPaymentModal } from "@/components/modals/ManualQrPaymentModal";
 
 export default function GiatmaraSkillDirectoryApp() {
   const {
+    language,
+    logout,
     trainees,
     skillsList,
     currentTrainee,
@@ -53,21 +55,32 @@ export default function GiatmaraSkillDirectoryApp() {
     setTimeout(() => setToastMessage(null), 4000);
   };
 
+  const handleLogout = () => {
+    logout();
+    setActivePortal("CLIENT");
+    triggerToast(
+      language === "ms"
+        ? "Anda telah berjaya log keluar."
+        : "You have been logged out."
+    );
+  };
+
   return (
     <div className="flex min-h-screen flex-col bg-[#F5F7FA] text-[#2C333A]">
       {/* Notification Toast */}
       {toastMessage && (
-        <div className="fixed bottom-5 right-5 z-50 rounded-lg border border-[#0170B9] bg-[#003459] px-4 py-3 text-xs font-bold text-white shadow-xl">
+        <div className="fixed right-4 bottom-20 z-50 rounded-xl border border-[#0170B9] bg-[#003459] px-4 py-3 text-xs font-bold text-white shadow-xl md:bottom-5">
           {toastMessage}
         </div>
       )}
 
-      {/* Official GIATMARA Two-Tier Header */}
+      {/* Header + Mobile Bottom Navigation */}
       <Navbar
         activePortal={activePortal}
         setActivePortal={setActivePortal}
         onOpenRegister={() => setShowRegisterModal(true)}
         onOpenLogin={() => setShowLoginModal(true)}
+        onLogout={handleLogout}
       />
 
       {/* Main Content Area */}
@@ -80,7 +93,7 @@ export default function GiatmaraSkillDirectoryApp() {
           />
         )}
 
-        {/* Portal 2: Trainee Studio */}
+        {/* Portal 2: Skilled Specialist Panel */}
         {activePortal === "TRAINEE" && (
           <TraineeStudio
             trainees={trainees}
@@ -88,12 +101,23 @@ export default function GiatmaraSkillDirectoryApp() {
             setActiveTraineeId={setCurrentTraineeId}
             onUpdateTrainee={updateTrainee}
             onPreviewProfile={setSelectedTrainee}
+            onLogout={handleLogout}
+            onDeleteAccount={(id) => {
+              deleteTrainee(id);
+              logout();
+              setActivePortal("CLIENT");
+              triggerToast(
+                language === "ms"
+                  ? "Akaun pakar anda telah dipadamkan."
+                  : "Your specialist account has been deleted."
+              );
+            }}
             onOpenPaymentModal={(tier) => {
               const planObj = SUBSCRIPTION_TIERS.find((p) => p.tier === tier);
               if (planObj) {
                 setCheckoutPlan({
                   tier: planObj.tier,
-                  name: planObj.name,
+                  name: language === "ms" ? planObj.name : planObj.nameEn,
                   priceRM: planObj.priceRM,
                 });
               }
@@ -101,46 +125,79 @@ export default function GiatmaraSkillDirectoryApp() {
           />
         )}
 
-        {/* Portal 3: Administrator Console */}
+        {/* Portal 3: Directory Management (Urusetia Direktori) */}
         {activePortal === "ADMIN" && (
           <AdminConsole
             trainees={trainees}
             skillsCatalog={skillsList}
+            onLogout={handleLogout}
             onVerifyToggle={(id) => {
               const target = trainees.find((t) => t.id === id);
               if (target) {
                 updateTrainee(id, { isVerified: !target.isVerified });
-                triggerToast(`Status pengesahan matriks dikemas kini.`);
+                triggerToast(
+                  language === "ms"
+                    ? "Status pengesahan pakar dikemas kini."
+                    : "Specialist verification status updated."
+                );
               }
             }}
             onListingToggle={(id) => {
               const target = trainees.find((t) => t.id === id);
               if (target) {
+                const nextActive = !(
+                  target.isPubliclyListed && target.isAccountActive !== false
+                );
                 updateTrainee(id, {
-                  isPubliclyListed: !target.isPubliclyListed,
+                  isPubliclyListed: nextActive,
+                  isAccountActive: nextActive,
                 });
-                triggerToast(`Status siaran direktori dikemas kini.`);
+                triggerToast(
+                  language === "ms"
+                    ? "Status aktif akaun dikemas kini."
+                    : "Account active status updated."
+                );
               }
             }}
             onDeleteTrainee={(id) => {
               deleteTrainee(id);
-              triggerToast(`Rekod pelatih telah dipadamkan.`);
+              triggerToast(
+                language === "ms"
+                  ? "Rekod pakar telah dipadamkan."
+                  : "Specialist record deleted."
+              );
             }}
             onUpdateTrainee={(id, updates) => {
               updateTrainee(id, updates);
-              triggerToast(`Maklumat pelatih telah disimpan.`);
+              triggerToast(
+                language === "ms"
+                  ? "Maklumat pakar telah disimpan."
+                  : "Specialist details saved."
+              );
             }}
             onAddSkill={(name, cluster) => {
               addSkill(name, cluster);
-              triggerToast(`Kemahiran baharu "${name}" ditambah.`);
+              triggerToast(
+                language === "ms"
+                  ? `Kategori kemahiran "${name}" ditambah.`
+                  : `Skill category "${name}" added.`
+              );
             }}
             onDeleteSkill={(id) => {
               deleteSkill(id);
-              triggerToast(`Kemahiran telah dikeluarkan daripada katalog.`);
+              triggerToast(
+                language === "ms"
+                  ? "Kategori kemahiran telah dikeluarkan."
+                  : "Skill category removed."
+              );
             }}
             onResetDemoData={() => {
               resetDemoData();
-              triggerToast(`Data asal GIATMARA telah dipulihkan.`);
+              triggerToast(
+                language === "ms"
+                  ? "Data asal direktori telah dipulihkan."
+                  : "Default directory dataset restored."
+              );
             }}
           />
         )}
@@ -159,11 +216,17 @@ export default function GiatmaraSkillDirectoryApp() {
         onLoginSuccess={(role, traineeName) => {
           if (role === "ADMIN") {
             setActivePortal("ADMIN");
-            triggerToast("Log masuk berjaya: Urusetia Pentadbir GIATMARA.");
+            triggerToast(
+              language === "ms"
+                ? "Log masuk berjaya: Urusetia Direktori."
+                : "Signed in: Directory Management."
+            );
           } else {
             setActivePortal("TRAINEE");
             triggerToast(
-              `Selamat kembali, ${traineeName || "Pelatih GIATMARA"}.`
+              language === "ms"
+                ? `Selamat kembali, ${traineeName || "Pakar Kemahiran"}.`
+                : `Welcome back, ${traineeName || "Skilled Specialist"}.`
             );
           }
         }}
@@ -176,29 +239,41 @@ export default function GiatmaraSkillDirectoryApp() {
           setShowRegisterModal(false);
           setActivePortal("TRAINEE");
           triggerToast(
-            "Pendaftaran pelatih berjaya! Pilih pelan ToyyibPay FPX untuk mengaktifkan siaran awam."
+            language === "ms"
+              ? "Pendaftaran berjaya! Percubaan Percuma 3 Bulan anda kini aktif."
+              : "Registration successful! Your 3-Month Free Trial is now active."
           );
         }}
       />
 
-      <ToyyibPayModal
+      <ManualQrPaymentModal
         checkoutPlan={checkoutPlan}
+        expertName={currentTrainee?.name || "Pakar Kemahiran"}
         onClose={() => setCheckoutPlan(null)}
-        onSuccess={(tier, name, priceRM, bank) => {
+        onSuccess={(tier, name, priceRM, refCode) => {
           if (currentTrainee) {
             updateTrainee(currentTrainee.id, {
               planTier: tier,
               isPubliclyListed: true,
+              isAccountActive: true,
+              paymentProofStatus: tier === "TRIAL" ? "NONE" : "PENDING",
+              paymentReference: refCode,
             });
           }
           setCheckoutPlan(null);
           triggerToast(
-            `Bayaran FPX (RM ${priceRM}.00 melalui ${bank}) berjaya! Pelan ${name} telah diaktifkan.`
+            tier === "TRIAL"
+              ? language === "ms"
+                ? "Percubaan Percuma 3 Bulan telah diaktifkan!"
+                : "3-Month Free Trial activated!"
+              : language === "ms"
+              ? `Bukti transaksi QR (${refCode}) dihantar! Pelan ${name} sedang disemak oleh Urusetia.`
+              : `QR payment proof (${refCode}) submitted! ${name} is pending verification.`
           );
         }}
       />
 
-      {/* Official GIATMARA Footer */}
+      {/* Footer */}
       <Footer />
     </div>
   );

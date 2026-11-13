@@ -1,119 +1,112 @@
 "use client";
 
 import React from "react";
-import { MapPin, Phone, Mail, ArrowUpRight } from "lucide-react";
+import { ShieldAlert, Wrench, CheckCircle2 } from "lucide-react";
+import { usePlatform } from "@/context/PlatformContext";
+import { TRANSLATIONS } from "@/lib/i18n";
 
 export function Footer() {
+  const { language } = usePlatform();
+  const t = TRANSLATIONS[language];
+
   return (
-    <footer className="mt-24 border-t border-slate-200/80 bg-white text-slate-600">
-      <div className="mx-auto max-w-7xl px-4 py-14 sm:px-6 lg:px-8">
-        <div className="grid grid-cols-1 gap-10 md:grid-cols-2 lg:grid-cols-12">
-          {/* Col 1: Brand & Mission (5 cols) */}
-          <div className="space-y-4 lg:col-span-5">
-            <img
-              src="https://giatmara.edu.my/wp-content/uploads/2022/07/KKDW-MARA-GIATMARA-Logo-1.png.webp"
-              alt="GIATMARA Malaysia"
-              className="h-11 w-auto object-contain"
-            />
-            <p className="max-w-sm text-xs leading-relaxed text-slate-500">
-              Platform direktori moden untuk menghubungkan pelatih &amp; alumni
-              berkemahiran tinggi GIATMARA Malaysia terus dengan pelanggan
-              kediaman serta komersial tanpa orang tengah.
+    <footer className="mt-16 border-t border-slate-200/80 bg-white pb-20 text-slate-600 md:pb-8">
+      <div className="mx-auto max-w-7xl px-4 py-10 sm:px-6 lg:px-8">
+        <div className="grid grid-cols-1 gap-8 md:grid-cols-12">
+          {/* Col 1: Brand & TVET Agencies (5 cols) */}
+          <div className="space-y-3 md:col-span-5">
+            <div className="flex items-center gap-2.5">
+              <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-[#0170B9] text-white">
+                <Wrench className="h-4 w-4 text-[#FCB900]" />
+              </div>
+              <span className="font-heading text-base font-extrabold text-slate-900">
+                {t.brandTitle}
+              </span>
+            </div>
+            <p className="text-xs leading-relaxed text-slate-500">
+              {language === "ms"
+                ? "Platform direktori komuniti perintis untuk menghubungkan tenaga mahir dan usahawan teknikal bertauliah terus dengan pelanggan mengikut daerah tanpa orang tengah."
+                : "Pioneer community directory connecting certified skilled professionals and technical specialists directly with clients by district without middlemen."}
             </p>
+
+            {/* Agency Badges (Subject to Permission) */}
             <div className="pt-1">
-              <img
-                src="https://giatmara.edu.my/wp-content/uploads/2022/07/Pilihan-withoutFont-1024x317.png.webp"
-                alt="Kemahiran Pilihan Pertama"
-                className="h-8 w-auto object-contain opacity-90"
-              />
+              <div className="flex flex-wrap gap-1.5">
+                {["GIATMARA", "IKM", "KKTM", "ILP / TVET"].map((agency) => (
+                  <span
+                    key={agency}
+                    className="rounded-lg border border-slate-200 bg-slate-50 px-2.5 py-1 text-[11px] font-bold text-slate-700"
+                  >
+                    {agency}
+                  </span>
+                ))}
+              </div>
+              <p className="mt-2 text-[11px] italic text-slate-400">
+                * {t.agencyPermissionNote}
+              </p>
             </div>
           </div>
 
-          {/* Col 2: Quick Links (3 cols) */}
-          <div className="lg:col-span-3">
+          {/* Col 2: Pioneer Program & Subscription Info (3 cols) */}
+          <div className="md:col-span-3">
             <h4 className="text-xs font-extrabold uppercase tracking-wider text-slate-900">
-              Ekosistem GIATMARA
+              {language === "ms"
+                ? "Program Perintis Pakar"
+                : "Pioneer Specialist Program"}
             </h4>
-            <ul className="mt-4 space-y-2.5 text-xs font-medium text-slate-500">
-              <li>
-                <a
-                  href="https://giatmara.edu.my/direktori-usahawan/"
-                  target="_blank"
-                  rel="noreferrer"
-                  className="inline-flex items-center gap-1 transition hover:text-[#0170B9]"
-                >
-                  <span>Direktori Usahawan Rasmi</span>
-                  <ArrowUpRight className="h-3 w-3" />
-                </a>
+            <ul className="mt-3 space-y-2 text-xs text-slate-500">
+              <li className="flex items-start gap-2">
+                <CheckCircle2 className="mt-0.5 h-3.5 w-3.5 shrink-0 text-[#09B474]" />
+                <span>
+                  {language === "ms"
+                    ? "Percubaan Percuma 3 Bulan untuk pakar kemahiran baharu"
+                    : "3-Month Free Trial for newly registered specialists"}
+                </span>
               </li>
-              <li>
-                <a
-                  href="https://giatmara.edu.my/senarai-kursus/"
-                  target="_blank"
-                  rel="noreferrer"
-                  className="inline-flex items-center gap-1 transition hover:text-[#0170B9]"
-                >
-                  <span>Senarai Kursus &amp; Sijil SKM</span>
-                  <ArrowUpRight className="h-3 w-3" />
-                </a>
+              <li className="flex items-start gap-2">
+                <CheckCircle2 className="mt-0.5 h-3.5 w-3.5 shrink-0 text-[#09B474]" />
+                <span>
+                  {language === "ms"
+                    ? "Tiada komisen atas kerja — urusan terus bersama pelanggan"
+                    : "Zero job commission — deal directly with clients"}
+                </span>
               </li>
-              <li>
-                <a
-                  href="http://gspel.giatmara.edu.my/"
-                  target="_blank"
-                  rel="noreferrer"
-                  className="inline-flex items-center gap-1 transition hover:text-[#0170B9]"
-                >
-                  <span>Permohonan Latihan (GSPel)</span>
-                  <ArrowUpRight className="h-3 w-3" />
-                </a>
-              </li>
-              <li>
-                <a
-                  href="https://giatmara.edu.my/direktori-giatmara/"
-                  target="_blank"
-                  rel="noreferrer"
-                  className="inline-flex items-center gap-1 transition hover:text-[#0170B9]"
-                >
-                  <span>232 Pusat GIATMARA Negeri</span>
-                  <ArrowUpRight className="h-3 w-3" />
-                </a>
+              <li className="flex items-start gap-2">
+                <CheckCircle2 className="mt-0.5 h-3.5 w-3.5 shrink-0 text-[#09B474]" />
+                <span>
+                  {language === "ms"
+                    ? "Bayaran langganan manual QR (sokongan Billplz akan datang)"
+                    : "Manual QR subscription billing (Billplz gateway ready)"}
+                </span>
               </li>
             </ul>
           </div>
 
-          {/* Col 3: Wisma GIATMARA Contact (4 cols) */}
-          <div className="lg:col-span-4">
-            <h4 className="text-xs font-extrabold uppercase tracking-wider text-slate-900">
-              Ibu Pejabat Korporat
-            </h4>
-            <ul className="mt-4 space-y-3 text-xs text-slate-500">
-              <li className="flex items-start gap-2.5">
-                <MapPin className="mt-0.5 h-4 w-4 shrink-0 text-[#0170B9]" />
-                <span>
-                  Wisma GIATMARA, No 39 &amp; 41 Jalan Medan Tuanku, 50300 Kuala
-                  Lumpur, Malaysia
-                </span>
-              </li>
-              <li className="flex items-center gap-2.5">
-                <Phone className="h-4 w-4 shrink-0 text-[#09B474]" />
-                <span>03-2691 2690 (Talian Rasmi)</span>
-              </li>
-              <li className="flex items-center gap-2.5">
-                <Mail className="h-4 w-4 shrink-0 text-[#0170B9]" />
-                <span>pelatih@giatmara.edu.my</span>
-              </li>
-            </ul>
+          {/* Col 3: Safety Precaution Box (4 cols) */}
+          <div className="md:col-span-4">
+            <div className="rounded-2xl border border-amber-200 bg-amber-50/70 p-4">
+              <div className="flex items-center gap-2 text-xs font-extrabold text-amber-900">
+                <ShieldAlert className="h-4 w-4 shrink-0 text-amber-600" />
+                <span>{t.safetyBannerTitle}</span>
+              </div>
+              <p className="mt-1.5 text-xs leading-relaxed text-amber-800">
+                {t.safetyBannerDesc}
+              </p>
+            </div>
           </div>
         </div>
 
-        <div className="mt-12 flex flex-col items-center justify-between gap-3 border-t border-slate-100 pt-6 text-xs text-slate-400 sm:flex-row">
+        <div className="mt-8 flex flex-col items-center justify-between gap-2 border-t border-slate-100 pt-5 text-xs text-slate-400 sm:flex-row">
           <p>
-            © {new Date().getFullYear()} GIATMARA Malaysia (KKDW &amp; MARA). All
-            rights reserved.
+            © {new Date().getFullYear()} {t.brandTitle}.{" "}
+            {language === "ms"
+              ? "Hak cipta terpelihara."
+              : "All rights reserved."}
           </p>
           <p className="font-medium text-slate-500">
-            FPX Billing powered by ToyyibPay Malaysia
+            {language === "ms"
+              ? "Inisiatif Perintis Direktori Pakar Kemahiran"
+              : "Pioneer Skilled Specialist Directory Initiative"}
           </p>
         </div>
       </div>

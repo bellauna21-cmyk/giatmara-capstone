@@ -8,8 +8,16 @@ import {
   TraineeListing,
   GiatmaraSkill,
 } from "@/lib/giatmara-data";
+import { Language } from "@/lib/i18n";
+
+export type AuthRole = "GUEST" | "TRAINEE" | "ADMIN";
 
 interface PlatformContextType {
+  language: Language;
+  setLanguage: (lang: Language) => void;
+  authRole: AuthRole;
+  setAuthRole: (role: AuthRole) => void;
+  logout: () => void;
   trainees: TraineeListing[];
   skillsList: GiatmaraSkill[];
   currentTrainee: TraineeListing;
@@ -23,30 +31,53 @@ interface PlatformContextType {
   resetDemoData: () => void;
 }
 
-const PlatformContext = createContext<PlatformContextType | undefined>(undefined);
+const PlatformContext = createContext<PlatformContextType | undefined>(
+  undefined
+);
 
 const STORAGE_KEYS = {
-  TRAINEES: "giatmara_skillshub_trainees_v1",
-  SKILLS: "giatmara_skillshub_skills_v1",
-  CURRENT_TRAINEE_ID: "giatmara_skillshub_current_id_v1",
+  TRAINEES: "giatmara_skillshub_trainees_v2",
+  SKILLS: "giatmara_skillshub_skills_v2",
+  CURRENT_TRAINEE_ID: "giatmara_skillshub_current_id_v2",
+  LANGUAGE: "giatmara_skillshub_lang_v2",
+  AUTH_ROLE: "giatmara_skillshub_auth_role_v2",
 };
 
 export function PlatformProvider({ children }: { children: React.ReactNode }) {
+  const [language, setLanguage] = useState<Language>("ms");
+  const [authRole, setAuthRole] = useState<AuthRole>("GUEST");
   const [trainees, setTrainees] = useState<TraineeListing[]>(INITIAL_TRAINEES);
-  const [skillsList, setSkillsList] = useState<GiatmaraSkill[]>(GIATMARA_SKILLS);
+  const [skillsList, setSkillsList] =
+    useState<GiatmaraSkill[]>(GIATMARA_SKILLS);
   const [currentTraineeId, setCurrentTraineeId] = useState<string>("tr-101");
   const [hydrated, setHydrated] = useState(false);
 
-  // Load saved state from localStorage / Backend API on client mount
+  // Load saved state from localStorage on client mount
   useEffect(() => {
     try {
       const savedTrainees = localStorage.getItem(STORAGE_KEYS.TRAINEES);
       const savedSkills = localStorage.getItem(STORAGE_KEYS.SKILLS);
-      const savedCurrentId = localStorage.getItem(STORAGE_KEYS.CURRENT_TRAINEE_ID);
+      const savedCurrentId = localStorage.getItem(
+        STORAGE_KEYS.CURRENT_TRAINEE_ID
+      );
+      const savedLang = localStorage.getItem(STORAGE_KEYS.LANGUAGE) as
+        | Language
+        | null;
+      const savedRole = localStorage.getItem(STORAGE_KEYS.AUTH_ROLE) as
+        | AuthRole
+        | null;
 
       if (savedTrainees) setTrainees(JSON.parse(savedTrainees));
       if (savedSkills) setSkillsList(JSON.parse(savedSkills));
       if (savedCurrentId) setCurrentTraineeId(savedCurrentId);
+      if (savedLang === "ms" || savedLang === "en") setLanguage(savedLang);
+      if (
+        savedRole === "GUEST" ||
+        savedRole === "TRAINEE" ||
+        savedRole === "ADMIN"
+      ) {
+        setAuthRole(savedRole);
+      }
     } catch (e) {
       console.error("Failed to load state from localStorage", e);
     } finally {
@@ -70,14 +101,27 @@ export function PlatformProvider({ children }: { children: React.ReactNode }) {
     localStorage.setItem(STORAGE_KEYS.CURRENT_TRAINEE_ID, currentTraineeId);
   }, [currentTraineeId, hydrated]);
 
+  useEffect(() => {
+    if (!hydrated) return;
+    localStorage.setItem(STORAGE_KEYS.LANGUAGE, language);
+  }, [language, hydrated]);
+
+  useEffect(() => {
+    if (!hydrated) return;
+    localStorage.setItem(STORAGE_KEYS.AUTH_ROLE, authRole);
+  }, [authRole, hydrated]);
+
   const currentTrainee =
     trainees.find((t) => t.id === currentTraineeId) || trainees[0];
+
+  const logout = () => {
+    setAuthRole("GUEST");
+  };
 
   const updateTrainee = (id: string, updates: Partial<TraineeListing>) => {
     setTrainees((prev) =>
       prev.map((t) => (t.id === id ? { ...t, ...updates } : t))
     );
-    // Sync asynchronously with backend API
     fetch(`/api/trainees/${id}`, {
       method: "PATCH",
       headers: { "Content-Type": "application/json" },
@@ -92,8 +136,8 @@ export function PlatformProvider({ children }: { children: React.ReactNode }) {
     };
     setTrainees((prev) => [created, ...prev]);
     setCurrentTraineeId(created.id);
+    setAuthRole("TRAINEE");
 
-    // Sync asynchronously with backend API
     fetch("/api/auth/register", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
@@ -102,8 +146,8 @@ export function PlatformProvider({ children }: { children: React.ReactNode }) {
         email: created.email,
         phone: created.phone,
         state: created.state,
-        city: created.city,
-        giatmaraCenter: created.giatmaraCenter,
+        city: created.district || created.city,
+        giatmaraCenter: created.district || created.state,
         studentId: created.studentId,
         headline: created.headline,
         skillSlug: created.skills[0] || "electrical-wiring",
@@ -114,7 +158,13 @@ export function PlatformProvider({ children }: { children: React.ReactNode }) {
   };
 
   const deleteTrainee = (id: string) => {
-    setTrainees((prev) => prev.filter((t) => t.id !== id));
+    setTrainees((prev) => {
+      const remaining = prev.filter((t) => t.id !== id);
+      if (currentTraineeId === id && remaining.length > 0) {
+        setCurrentTraineeId(remaining[0].id);
+      }
+      return remaining;
+    });
     fetch(`/api/trainees/${id}`, { method: "DELETE" }).catch(() => {});
   };
 
@@ -127,8 +177,11 @@ export function PlatformProvider({ children }: { children: React.ReactNode }) {
       id: `sk-${Date.now()}`,
       name: name.trim(),
       malayName: name.trim(),
+      shortMalay: name.trim(),
+      shortEn: name.trim(),
       cluster: cluster.trim(),
       slug,
+      iconName: "Wrench",
     };
     setSkillsList((prev) => [...prev, createdSkill]);
 
@@ -158,6 +211,11 @@ export function PlatformProvider({ children }: { children: React.ReactNode }) {
   return (
     <PlatformContext.Provider
       value={{
+        language,
+        setLanguage,
+        authRole,
+        setAuthRole,
+        logout,
         trainees,
         skillsList,
         currentTrainee,
