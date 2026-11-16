@@ -66,10 +66,10 @@ export default function GiatmaraSkillDirectoryApp() {
   };
 
   return (
-    <div className="flex min-h-screen flex-col bg-[#F4F6F9] text-[#1E293B]">
+    <div className="flex min-h-screen flex-col bg-[#FAFAFC] text-slate-900">
       {/* Notification Toast */}
       {toastMessage && (
-        <div className="fixed right-4 bottom-20 z-50 rounded-xl border border-[#0170B9] bg-[#003459] px-4 py-3 text-xs font-bold text-white shadow-xl md:bottom-5">
+        <div className="fixed right-4 bottom-20 z-50 rounded-xl bg-slate-900 px-4 py-3 text-xs font-bold text-white shadow-xl md:bottom-5">
           {toastMessage}
         </div>
       )}
