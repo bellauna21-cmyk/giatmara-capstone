@@ -168,26 +168,26 @@ export function ClientDirectory({
               <button
                 type="button"
                 onClick={() => setSelectedSkill("ALL")}
-                className={`group flex flex-col items-center justify-center rounded-2xl border-2 p-3 sm:p-4 text-center transition-all ${
+                className={`group flex flex-col items-center justify-between rounded-2xl border-2 p-2 sm:p-3.5 text-center transition-all ${
                   selectedSkill === "ALL"
                     ? "border-[#0170B9] bg-[#0170B9] text-white shadow-md ring-2 ring-[#0170B9]/20 -translate-y-0.5"
                     : "border-slate-200/90 bg-white text-slate-800 hover:border-[#0170B9]/60 hover:shadow-xs hover:-translate-y-0.5"
                 }`}
               >
                 <div
-                  className={`flex h-12 w-12 sm:h-14 sm:w-14 items-center justify-center rounded-2xl transition-all shadow-xs border ${
+                  className={`flex h-11 w-11 sm:h-13 sm:w-13 items-center justify-center rounded-2xl transition-all shadow-xs border ${
                     selectedSkill === "ALL"
                       ? "bg-white/20 text-white border-white/30"
                       : "bg-blue-50/90 text-[#0170B9] border-blue-200/70 group-hover:scale-105"
                   }`}
                 >
-                  <LayoutGrid className="h-6 w-6 sm:h-7 sm:w-7" />
+                  <LayoutGrid className="h-5 w-5 sm:h-6 sm:w-6" />
                 </div>
-                <span className="mt-2.5 text-[11px] sm:text-xs font-extrabold line-clamp-1 w-full">
+                <span className="mt-1.5 text-[10.5px] sm:text-xs font-extrabold leading-tight text-center w-full min-h-[28px] sm:min-h-[32px] flex items-center justify-center break-words px-0.5">
                   {t.allSkills}
                 </span>
                 <span
-                  className={`mt-0.5 text-[10px] font-semibold ${
+                  className={`text-[10px] font-semibold ${
                     selectedSkill === "ALL" ? "text-blue-100" : "text-slate-400"
                   }`}
                 >
@@ -218,26 +218,26 @@ export function ClientDirectory({
                     type="button"
                     key={skill.id}
                     onClick={() => setSelectedSkill(active ? "ALL" : skill.slug)}
-                    className={`group flex flex-col items-center justify-center rounded-2xl border-2 p-3 sm:p-4 text-center transition-all ${
+                    className={`group flex flex-col items-center justify-between rounded-2xl border-2 p-2 sm:p-3.5 text-center transition-all ${
                       active
                         ? "border-[#0170B9] bg-[#0170B9] text-white shadow-md ring-2 ring-[#0170B9]/20 -translate-y-0.5"
                         : "border-slate-200/90 bg-white text-slate-800 hover:border-slate-300 hover:shadow-xs hover:-translate-y-0.5"
                     }`}
                   >
                     <div
-                      className={`flex h-12 w-12 sm:h-14 sm:w-14 items-center justify-center rounded-2xl transition-all shadow-xs border ${
+                      className={`flex h-11 w-11 sm:h-13 sm:w-13 items-center justify-center rounded-2xl transition-all shadow-xs border ${
                         active
                           ? "bg-white/20 text-white border-white/30"
                           : `${config.iconBg} ${config.iconColor} group-hover:scale-105`
                       }`}
                     >
-                      <SkillIcon className="h-6 w-6 sm:h-7 sm:w-7" />
+                      <SkillIcon className="h-5 w-5 sm:h-6 sm:w-6" />
                     </div>
-                    <span className="mt-2.5 text-[11px] sm:text-xs font-extrabold line-clamp-1 w-full">
+                    <span className="mt-1.5 text-[10.5px] sm:text-xs font-extrabold leading-tight text-center w-full min-h-[28px] sm:min-h-[32px] flex items-center justify-center break-words px-0.5">
                       {displayName}
                     </span>
                     <span
-                      className={`mt-0.5 text-[10px] font-semibold ${
+                      className={`text-[10px] font-semibold ${
                         active ? "text-blue-100" : "text-slate-400"
                       }`}
                     >
