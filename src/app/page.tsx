@@ -66,7 +66,7 @@ export default function GiatmaraSkillDirectoryApp() {
   };
 
   return (
-    <div className="flex min-h-screen flex-col bg-[#F5F7FA] text-[#2C333A]">
+    <div className="flex min-h-screen flex-col bg-[#F4F6F9] text-[#1E293B]">
       {/* Notification Toast */}
       {toastMessage && (
         <div className="fixed right-4 bottom-20 z-50 rounded-xl border border-[#0170B9] bg-[#003459] px-4 py-3 text-xs font-bold text-white shadow-xl md:bottom-5">

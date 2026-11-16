@@ -4,22 +4,13 @@ import React, { useState, useMemo } from "react";
 import {
   Search,
   MapPin,
-  Wrench,
   RotateCcw,
   Clock,
   Zap,
   ShieldAlert,
   Users,
-  Snowflake,
-  Droplets,
-  Car,
-  Bike,
-  Flame,
-  Scissors,
-  UtensilsCrossed,
-  Sparkles,
-  Laptop,
   LayoutGrid,
+  Sparkles,
 } from "lucide-react";
 import {
   MALAYSIA_STATES,
@@ -29,25 +20,12 @@ import {
 import { TraineeCard } from "./TraineeCard";
 import { usePlatform } from "@/context/PlatformContext";
 import { TRANSLATIONS } from "@/lib/i18n";
+import { TRADE_ICON_CONFIG } from "./SkillIcons";
 
 interface ClientDirectoryProps {
   trainees: TraineeListing[];
   onSelectTrainee: (trainee: TraineeListing) => void;
 }
-
-const SKILL_ICON_MAP: Record<string, React.ComponentType<{ className?: string }>> = {
-  Zap,
-  Snowflake,
-  Droplets,
-  Car,
-  Bike,
-  Flame,
-  Scissors,
-  UtensilsCrossed,
-  Sparkles,
-  Laptop,
-  Wrench,
-};
 
 export function ClientDirectory({
   trainees = [],
@@ -134,128 +112,149 @@ export function ClientDirectory({
     onlyEmergency;
 
   return (
-    <div className="pb-16">
-      {/* 1. COMPACT 1-2 LINE HERO + VISUAL SKILL ICON GRID (NO LONG SCROLLING) */}
-      <section className="border-b border-slate-200/80 bg-white pt-5 pb-6 sm:pt-7 sm:pb-8">
-        <div className="mx-auto max-w-7xl px-3 sm:px-6 lg:px-8">
-          {/* 1-2 Line Direct Headline */}
+    <div className="pb-16 bg-[#F4F6F9]">
+      {/* 1. MARA-INSPIRED WARM HERO BANNER (NOT STERILE WHITE, WITH DIGNIFIED MARA NAVY & GOLD) */}
+      <section className="relative overflow-hidden bg-gradient-to-br from-[#002D4A] via-[#01426A] to-[#01528A] text-white pt-7 pb-8 sm:pt-9 sm:pb-10 shadow-sm border-b-4 border-[#FCB900]">
+        {/* Subtle decorative heritage geometry */}
+        <div className="pointer-events-none absolute -right-16 -top-16 h-64 w-64 rounded-full bg-white/5 blur-2xl" />
+        <div className="pointer-events-none absolute left-1/3 bottom-0 h-40 w-40 rounded-full bg-[#FCB900]/10 blur-2xl" />
+
+        <div className="relative mx-auto max-w-7xl px-3 sm:px-6 lg:px-8">
+          {/* Top TVET Badge */}
+          <div className="flex flex-wrap items-center justify-center sm:justify-start gap-2 mb-3">
+            <span className="inline-flex items-center gap-1.5 rounded-full bg-[#FCB900] px-3 py-0.5 text-[11px] font-extrabold text-slate-950 shadow-xs">
+              <span className="h-1.5 w-1.5 rounded-full bg-[#C8102E]" />
+              {language === "ms" ? "Inisiatif TVET Malaysia" : "Malaysia TVET Initiative"}
+            </span>
+            <span className="text-xs font-semibold text-blue-200">
+              GIATMARA • IKM • KKTM • ILP
+            </span>
+          </div>
+
+          {/* 1-2 Line Direct Headline with MARA Prestige */}
           <div className="text-center sm:text-left">
-            <h1 className="font-heading text-xl font-extrabold tracking-tight text-slate-900 sm:text-2xl lg:text-3xl">
+            <h1 className="font-heading text-2xl font-extrabold tracking-tight sm:text-3xl lg:text-4xl text-white">
               {t.heroHeadline}
             </h1>
-            <p className="mt-1 text-xs font-medium text-slate-500 sm:text-sm">
+            <p className="mt-1.5 max-w-2xl text-xs font-medium text-blue-100 sm:text-sm leading-relaxed">
               {t.heroSubline}
             </p>
           </div>
+        </div>
+      </section>
 
-          {/* Interactive Skill Icon Grid */}
-          <div className="mt-4 sm:mt-5">
-            <div className="mb-2.5 flex items-center justify-between">
-              <span className="text-[11px] font-extrabold uppercase tracking-wider text-slate-400">
+      {/* 2. PROPER NON-AI SKILL ICONS GRID (ABOVE THE FOLD, REAL CRAFT BADGES) */}
+      <section className="mx-auto max-w-7xl px-3 sm:px-6 lg:px-8 -mt-4">
+        <div className="rounded-2xl border-2 border-slate-200/90 bg-white p-3.5 sm:p-5 shadow-md">
+          <div className="mb-3 flex items-center justify-between border-b border-slate-100 pb-2.5">
+            <div className="flex items-center gap-2">
+              <span className="h-2 w-2 rounded-full bg-[#C8102E]" />
+              <h2 className="text-xs sm:text-sm font-extrabold uppercase tracking-wider text-slate-800">
                 {t.chooseSkillTitle}
-              </span>
-              {selectedSkill !== "ALL" && (
-                <button
-                  type="button"
-                  onClick={() => setSelectedSkill("ALL")}
-                  className="text-xs font-bold text-[#0170B9] hover:underline"
-                >
-                  {t.allSkills}
-                </button>
-              )}
+              </h2>
             </div>
-
-            <div className="grid grid-cols-2 gap-2 sm:grid-cols-3 md:grid-cols-5 lg:grid-cols-6">
-              {/* "Semua Kemahiran" Tile */}
+            {selectedSkill !== "ALL" && (
               <button
                 type="button"
                 onClick={() => setSelectedSkill("ALL")}
-                className={`flex items-center gap-2.5 rounded-xl border p-2.5 text-left transition-all sm:flex-col sm:items-start sm:p-3 ${
-                  selectedSkill === "ALL"
-                    ? "border-[#0170B9] bg-[#0170B9] text-white shadow-sm"
-                    : "border-slate-200/90 bg-slate-50/70 text-slate-700 hover:border-[#0170B9]/40 hover:bg-white"
-                }`}
+                className="text-xs font-bold text-[#01528A] hover:underline"
               >
-                <div
-                  className={`flex h-9 w-9 shrink-0 items-center justify-center rounded-lg ${
-                    selectedSkill === "ALL"
-                      ? "bg-white/20 text-white"
-                      : "bg-[#0170B9]/10 text-[#0170B9]"
-                  }`}
-                >
-                  <LayoutGrid className="h-4 w-4" />
-                </div>
-                <div className="min-w-0">
-                  <p className="truncate text-xs font-extrabold">
-                    {t.allSkills}
-                  </p>
-                  <p
-                    className={`truncate text-[10px] ${
-                      selectedSkill === "ALL"
-                        ? "text-blue-100"
-                        : "text-slate-400"
-                    }`}
-                  >
-                    {trainees.filter((x) => x.isPubliclyListed && x.isAccountActive !== false).length}{" "}
-                    {language === "ms" ? "Pakar" : "Experts"}
-                  </p>
-                </div>
+                {t.allSkills}
               </button>
-
-              {/* Individual Visual Skill Icon Cards */}
-              {skillsList.map((skill) => {
-                const active = selectedSkill === skill.slug;
-                const IconComponent =
-                  SKILL_ICON_MAP[skill.iconName] || Wrench;
-
-                return (
-                  <button
-                    type="button"
-                    key={skill.id}
-                    onClick={() =>
-                      setSelectedSkill(active ? "ALL" : skill.slug)
-                    }
-                    className={`flex items-center gap-2.5 rounded-xl border p-2.5 text-left transition-all sm:flex-col sm:items-start sm:p-3 ${
-                      active
-                        ? "border-[#0170B9] bg-[#0170B9] text-white shadow-sm"
-                        : "border-slate-200/90 bg-white text-slate-800 hover:border-[#0170B9]/50 hover:shadow-xs"
-                    }`}
-                  >
-                    <div
-                      className={`flex h-9 w-9 shrink-0 items-center justify-center rounded-lg ${
-                        active
-                          ? "bg-white/20 text-white"
-                          : "bg-[#0170B9]/10 text-[#0170B9]"
-                      }`}
-                    >
-                      <IconComponent className="h-4 w-4" />
-                    </div>
-                    <div className="min-w-0 w-full">
-                      <p className="line-clamp-1 text-xs font-extrabold">
-                        {language === "ms"
-                          ? skill.shortMalay || skill.malayName
-                          : skill.shortEn || skill.name}
-                      </p>
-                      <p
-                        className={`line-clamp-1 text-[10px] ${
-                          active ? "text-blue-100" : "text-slate-400"
-                        }`}
-                      >
-                        {language === "ms" ? skill.malayName : skill.name}
-                      </p>
-                    </div>
-                  </button>
-                );
-              })}
-            </div>
+            )}
           </div>
 
-          {/* 2. STATE (NEGERI), DISTRICT (DAERAH) & KEYWORD FILTER BAR */}
-          <div className="mt-4 rounded-2xl border border-slate-200 bg-slate-50/70 p-2.5 shadow-2xs sm:p-3">
+          {/* Grid of Distinct, Non-AI Skill Badges */}
+          <div className="grid grid-cols-2 gap-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6">
+            {/* "Semua Kemahiran" Card */}
+            <button
+              type="button"
+              onClick={() => setSelectedSkill("ALL")}
+              className={`group flex items-center gap-2.5 rounded-xl border-2 p-2.5 text-left transition-all sm:flex-col sm:items-start sm:p-3 ${
+                selectedSkill === "ALL"
+                  ? "border-[#002D4A] bg-[#002D4A] text-white shadow-md ring-2 ring-[#FCB900]"
+                  : "border-slate-200 bg-slate-50 text-slate-800 hover:border-[#01528A] hover:bg-white"
+              }`}
+            >
+              <div
+                className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-xl shadow-xs transition ${
+                  selectedSkill === "ALL"
+                    ? "bg-[#FCB900] text-slate-950"
+                    : "bg-[#002D4A]/10 text-[#002D4A] group-hover:bg-[#002D4A] group-hover:text-white"
+                }`}
+              >
+                <LayoutGrid className="h-5 w-5" />
+              </div>
+              <div className="min-w-0 w-full">
+                <p className="truncate text-xs font-extrabold">{t.allSkills}</p>
+                <p
+                  className={`truncate text-[10px] font-semibold ${
+                    selectedSkill === "ALL" ? "text-amber-200" : "text-slate-500"
+                  }`}
+                >
+                  {trainees.filter((x) => x.isPubliclyListed && x.isAccountActive !== false).length}{" "}
+                  {language === "ms" ? "Pakar Aktif" : "Active Experts"}
+                </p>
+              </div>
+            </button>
+
+            {/* Individual Proper Non-AI Skill Cards */}
+            {skillsList.map((skill) => {
+              const active = selectedSkill === skill.slug;
+              const config = TRADE_ICON_CONFIG[skill.slug] || TRADE_ICON_CONFIG["ALL"];
+              const IconComponent = config.icon;
+              const countInTrade = trainees.filter(
+                (tr) =>
+                  tr.isPubliclyListed &&
+                  tr.isAccountActive !== false &&
+                  tr.skills.includes(skill.slug)
+              ).length;
+
+              return (
+                <button
+                  type="button"
+                  key={skill.id}
+                  onClick={() => setSelectedSkill(active ? "ALL" : skill.slug)}
+                  className={`group flex items-center gap-2.5 rounded-xl border-2 p-2.5 text-left transition-all sm:flex-col sm:items-start sm:p-3 ${
+                    active
+                      ? `${config.borderActive} shadow-md ring-2 ring-[#FCB900]`
+                      : `${config.borderLight} hover:shadow-xs`
+                  }`}
+                >
+                  <div
+                    className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-xl shadow-xs transition ${
+                      active
+                        ? "bg-white text-slate-900"
+                        : `${config.badgeBg} group-hover:scale-105`
+                    }`}
+                  >
+                    <IconComponent className="h-5 w-5" />
+                  </div>
+                  <div className="min-w-0 w-full">
+                    <p className="line-clamp-1 text-xs font-extrabold">
+                      {language === "ms"
+                        ? skill.shortMalay || skill.malayName
+                        : skill.shortEn || skill.name}
+                    </p>
+                    <p
+                      className={`truncate text-[10px] font-medium ${
+                        active ? "text-white/80" : "text-slate-500"
+                      }`}
+                    >
+                      {countInTrade} {language === "ms" ? "Pakar" : "Experts"}
+                    </p>
+                  </div>
+                </button>
+              );
+            })}
+          </div>
+
+          {/* 3. NEGERI, DAERAH & KEYWORD FILTER BAR WITH CLEAR MARA CONTRAST */}
+          <div className="mt-4 rounded-xl border border-slate-200 bg-slate-100/70 p-2.5 sm:p-3">
             <div className="grid grid-cols-1 gap-2.5 md:grid-cols-12">
               {/* Keyword Search */}
-              <div className="flex items-center gap-2.5 rounded-xl border border-slate-200 bg-white px-3.5 py-2 md:col-span-4">
-                <Search className="h-4 w-4 shrink-0 text-[#0170B9]" />
+              <div className="flex items-center gap-2.5 rounded-xl border border-slate-200 bg-white px-3.5 py-2 md:col-span-4 shadow-2xs">
+                <Search className="h-4 w-4 shrink-0 text-[#01528A]" />
                 <div className="w-full">
                   <label className="block text-[10px] font-bold uppercase tracking-wider text-slate-400">
                     {t.searchLabel}
@@ -271,8 +270,8 @@ export function ClientDirectory({
               </div>
 
               {/* State (Negeri) Filter */}
-              <div className="flex items-center gap-2.5 rounded-xl border border-slate-200 bg-white px-3.5 py-2 md:col-span-4">
-                <MapPin className="h-4 w-4 shrink-0 text-[#09B474]" />
+              <div className="flex items-center gap-2.5 rounded-xl border border-slate-200 bg-white px-3.5 py-2 md:col-span-4 shadow-2xs">
+                <MapPin className="h-4 w-4 shrink-0 text-[#C8102E]" />
                 <div className="w-full">
                   <label className="block text-[10px] font-bold uppercase tracking-wider text-slate-400">
                     {t.stateLabel}
@@ -296,8 +295,8 @@ export function ClientDirectory({
               </div>
 
               {/* District (Daerah) Filter */}
-              <div className="flex items-center gap-2.5 rounded-xl border border-slate-200 bg-white px-3.5 py-2 md:col-span-4">
-                <MapPin className="h-4 w-4 shrink-0 text-[#0170B9]" />
+              <div className="flex items-center gap-2.5 rounded-xl border border-slate-200 bg-white px-3.5 py-2 md:col-span-4 shadow-2xs">
+                <MapPin className="h-4 w-4 shrink-0 text-[#01528A]" />
                 <div className="w-full">
                   <label className="block text-[10px] font-bold uppercase tracking-wider text-slate-400">
                     {t.districtLabel}
@@ -318,8 +317,8 @@ export function ClientDirectory({
               </div>
             </div>
 
-            {/* Quick Status Filters Row */}
-            <div className="mt-2.5 flex flex-wrap items-center justify-between gap-2 pt-1">
+            {/* Quick Status Filters */}
+            <div className="mt-2.5 flex flex-wrap items-center justify-between gap-2 pt-1 border-t border-slate-200/80">
               <div className="flex flex-wrap items-center gap-2">
                 <button
                   type="button"
@@ -327,7 +326,7 @@ export function ClientDirectory({
                   className={`inline-flex items-center gap-1.5 rounded-xl px-3 py-1.5 text-xs font-bold transition ${
                     onlyAvailableNow
                       ? "bg-[#09B474] text-white shadow-2xs"
-                      : "border border-slate-200 bg-white text-slate-700 hover:bg-slate-100"
+                      : "border border-slate-200 bg-white text-slate-700 hover:bg-slate-50"
                   }`}
                 >
                   <Clock className="h-3.5 w-3.5" />
@@ -339,11 +338,11 @@ export function ClientDirectory({
                   onClick={() => setOnlyEmergency(!onlyEmergency)}
                   className={`inline-flex items-center gap-1.5 rounded-xl px-3 py-1.5 text-xs font-bold transition ${
                     onlyEmergency
-                      ? "bg-rose-600 text-white shadow-2xs"
-                      : "border border-slate-200 bg-white text-slate-700 hover:bg-slate-100"
+                      ? "bg-[#C8102E] text-white shadow-2xs"
+                      : "border border-slate-200 bg-white text-slate-700 hover:bg-slate-50"
                   }`}
                 >
-                  <Zap className="h-3.5 w-3.5" />
+                  <Zap className="h-3.5 w-3.5 text-amber-300" />
                   <span>{t.emergencyFilter}</span>
                 </button>
 
@@ -351,7 +350,7 @@ export function ClientDirectory({
                   <button
                     type="button"
                     onClick={resetFilters}
-                    className="inline-flex items-center gap-1 rounded-xl bg-rose-50 px-3 py-1.5 text-xs font-bold text-rose-600 hover:bg-rose-100"
+                    className="inline-flex items-center gap-1 rounded-xl bg-rose-50 px-3 py-1.5 text-xs font-bold text-rose-700 hover:bg-rose-100"
                   >
                     <RotateCcw className="h-3.5 w-3.5" />
                     <span>{t.resetFilter}</span>
@@ -359,9 +358,9 @@ export function ClientDirectory({
                 )}
               </div>
 
-              <span className="text-xs font-semibold text-slate-500">
+              <span className="text-xs font-bold text-slate-700">
                 {t.showingResults}{" "}
-                <strong className="text-slate-900">
+                <strong className="text-[#01528A]">
                   {filteredTrainees.length}
                 </strong>{" "}
                 {t.expertsCountLabel}
@@ -369,21 +368,21 @@ export function ClientDirectory({
             </div>
           </div>
 
-          {/* 3. SAFETY PRECAUTION BANNER (JUMPA SEBELUM BAYAR) */}
-          <div className="mt-3.5 flex items-start gap-2.5 rounded-xl border border-amber-300/90 bg-amber-50/90 px-3.5 py-2.5 text-xs text-amber-900">
-            <ShieldAlert className="mt-0.5 h-4 w-4 shrink-0 text-amber-600" />
+          {/* 4. SOLID ANTI-SCAM PRECAUTION BANNER (JUMPA SEBELUM BAYAR) */}
+          <div className="mt-3.5 flex items-start gap-2.5 rounded-xl border-2 border-amber-300 bg-amber-50 px-3.5 py-2.5 text-xs text-amber-950 shadow-2xs">
+            <ShieldAlert className="mt-0.5 h-4 w-4 shrink-0 text-[#C8102E]" />
             <p className="leading-relaxed">
-              <strong className="font-extrabold">{t.safetyBannerTitle}</strong>{" "}
+              <strong className="font-extrabold text-[#C8102E]">{t.safetyBannerTitle}</strong>{" "}
               {t.safetyBannerDesc}
             </p>
           </div>
         </div>
       </section>
 
-      {/* 4. SPECIALIST DIRECTORY CARDS GRID */}
+      {/* 5. SPECIALIST DIRECTORY CARDS (WITH WARM AUTHENTIC MARA TVET LOOK) */}
       <div className="mx-auto mt-6 max-w-7xl px-3 sm:px-6 lg:px-8">
         {filteredTrainees.length === 0 ? (
-          <div className="rounded-2xl border border-slate-200/80 bg-white p-10 text-center shadow-xs">
+          <div className="rounded-2xl border-2 border-slate-200 bg-white p-10 text-center shadow-xs">
             <Users className="mx-auto h-10 w-10 text-slate-300" />
             <h3 className="mt-3 font-heading text-base font-bold text-slate-900">
               {t.noResultsTitle}
@@ -394,7 +393,7 @@ export function ClientDirectory({
             <button
               type="button"
               onClick={resetFilters}
-              className="mt-4 inline-flex items-center gap-1.5 rounded-xl bg-[#0170B9] px-4 py-2.5 text-xs font-bold text-white shadow-xs hover:bg-[#005a96]"
+              className="mt-4 inline-flex items-center gap-1.5 rounded-xl bg-[#01528A] px-4 py-2.5 text-xs font-bold text-white shadow-xs hover:bg-[#002D4A]"
             >
               <RotateCcw className="h-3.5 w-3.5" />
               {t.resetFilter}
