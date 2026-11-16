@@ -107,8 +107,8 @@ export function TraineeCard({ trainee, onSelect }: TraineeCardProps) {
 
         {/* 1. Kemahiran Utama & Daerah */}
         <div className="mt-3.5 flex flex-wrap items-center justify-between gap-1.5">
-          <div className="inline-flex items-center gap-1.5 rounded-lg bg-blue-50/80 px-2.5 py-1 text-xs font-bold text-[#0170B9]">
-            <SkillIcon className="h-3.5 w-3.5" />
+          <div className={`inline-flex items-center gap-1.5 rounded-lg px-2.5 py-1 text-xs font-bold border border-slate-200/60 ${tradeConfig.badgeBg}`}>
+            <SkillIcon className={`h-3.5 w-3.5 ${tradeConfig.iconColor}`} />
             <span>{displaySkillName}</span>
           </div>
 

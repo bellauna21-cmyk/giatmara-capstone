@@ -11,6 +11,7 @@ import {
   ShieldAlert,
   Users,
   LayoutGrid,
+  Sparkles,
 } from "lucide-react";
 import {
   MALAYSIA_STATES,
@@ -114,34 +115,42 @@ export function ClientDirectory({
     onlyEmergency;
 
   return (
-    <div className="pb-20 bg-[#FAFAFC] overflow-x-hidden">
-      {/* 1. Hero Section with 1-2 Line Direct Headline */}
-      <section className="border-b border-slate-200/80 bg-white pt-6 pb-6 sm:pt-10 sm:pb-8">
-        <div className="mx-auto max-w-7xl px-3 sm:px-6 lg:px-8">
+    <div className="pb-20 bg-[#F8FAFC] overflow-x-hidden">
+      {/* 1. Hero Section with Warm Architectural Gradient & Direct Headline */}
+      <section className="relative overflow-hidden border-b border-slate-200/90 bg-gradient-to-b from-[#F1F5F9]/80 via-white to-[#F8FAFC] pt-6 pb-7 sm:pt-10 sm:pb-9">
+        {/* Subtle decorative warmth */}
+        <div className="pointer-events-none absolute -top-20 right-0 h-80 w-80 rounded-full bg-[#0170B9]/5 blur-3xl" />
+        <div className="pointer-events-none absolute top-40 left-10 h-72 w-72 rounded-full bg-[#FCB900]/5 blur-3xl" />
+
+        <div className="relative mx-auto max-w-7xl px-3 sm:px-6 lg:px-8">
           <div className="max-w-3xl">
-            {/* Accreditation Badge */}
-            <div className="inline-flex items-center gap-2 rounded-full border border-[#0170B9]/20 bg-[#0170B9]/5 px-3 py-1 text-[11px] sm:text-xs font-bold text-[#0170B9]">
+            {/* Accreditation Badge with Warm Accent */}
+            <div className="inline-flex items-center gap-2 rounded-full border border-slate-200 bg-white px-3 py-1 text-[11px] sm:text-xs font-bold text-slate-800 shadow-2xs">
               <span className="h-2 w-2 rounded-full bg-[#09B474]" />
-              <span>TVET Malaysia (GIATMARA • IKM • KKTM • ILP)</span>
+              <span>TVET Malaysia</span>
+              <span className="text-slate-300">•</span>
+              <span className="text-[#0170B9]">GIATMARA • IKM • KKTM • ILP</span>
             </div>
 
             {/* 1-2 Line Direct Headline */}
-            <h1 className="mt-3 font-heading text-2xl sm:text-3xl lg:text-4xl font-extrabold tracking-tight text-slate-900 leading-tight">
+            <h1 className="mt-3.5 font-heading text-2xl sm:text-3xl lg:text-4xl font-extrabold tracking-tight text-slate-900 leading-tight">
               {t.heroHeadline}
             </h1>
 
-            <p className="mt-2 text-xs sm:text-sm text-slate-600 leading-relaxed max-w-2xl">
+            <p className="mt-2 text-xs sm:text-sm text-slate-600 leading-relaxed max-w-2xl font-medium">
               {t.heroSubline}
             </p>
           </div>
 
-          {/* 2. THE MAIN FOCUS: BIG PROPER SKILL ICON GRID */}
+          {/* 2. THE MAIN FOCUS: TACTILE, PROMINENT TRADE ICON GRID */}
           <div className="mt-6 sm:mt-8">
             <div className="mb-3 flex items-center justify-between">
-              <span className="text-xs sm:text-sm font-extrabold uppercase tracking-wider text-slate-700 flex items-center gap-1.5">
+              <div className="flex items-center gap-2">
                 <span className="h-2 w-2 rounded-full bg-[#0170B9]" />
-                {t.chooseSkillTitle}
-              </span>
+                <span className="text-xs sm:text-sm font-extrabold uppercase tracking-wider text-slate-800">
+                  {t.chooseSkillTitle}
+                </span>
+              </div>
               {selectedSkill !== "ALL" && (
                 <button
                   type="button"
@@ -154,27 +163,27 @@ export function ClientDirectory({
             </div>
 
             {/* Prominent Visual Icon Grid: 3 cols on mobile, 4 on tablet, 6 on desktop */}
-            <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-4 lg:grid-cols-6 gap-2 sm:gap-3.5">
+            <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-4 lg:grid-cols-6 gap-2.5 sm:gap-3.5">
               {/* Tile 0: Semua Kemahiran */}
               <button
                 type="button"
                 onClick={() => setSelectedSkill("ALL")}
-                className={`group flex flex-col items-center justify-center rounded-2xl border-2 p-2.5 sm:p-4 text-center transition-all ${
+                className={`group flex flex-col items-center justify-center rounded-2xl border-2 p-3 sm:p-4 text-center transition-all ${
                   selectedSkill === "ALL"
-                    ? "border-[#0170B9] bg-[#0170B9] text-white shadow-md ring-2 ring-[#0170B9]/20 scale-[1.02]"
-                    : "border-slate-200/90 bg-white text-slate-800 hover:border-[#0170B9]/60 hover:shadow-xs"
+                    ? "border-[#0170B9] bg-[#0170B9] text-white shadow-md ring-2 ring-[#0170B9]/20 -translate-y-0.5"
+                    : "border-slate-200/90 bg-white text-slate-800 hover:border-[#0170B9]/60 hover:shadow-xs hover:-translate-y-0.5"
                 }`}
               >
                 <div
-                  className={`flex h-11 w-11 sm:h-14 sm:w-14 items-center justify-center rounded-xl sm:rounded-2xl transition-all ${
+                  className={`flex h-12 w-12 sm:h-14 sm:w-14 items-center justify-center rounded-2xl transition-all shadow-xs border ${
                     selectedSkill === "ALL"
-                      ? "bg-white/20 text-white"
-                      : "bg-blue-50 text-[#0170B9] group-hover:scale-105"
+                      ? "bg-white/20 text-white border-white/30"
+                      : "bg-blue-50/90 text-[#0170B9] border-blue-200/70 group-hover:scale-105"
                   }`}
                 >
                   <LayoutGrid className="h-6 w-6 sm:h-7 sm:w-7" />
                 </div>
-                <span className="mt-2 text-[11px] sm:text-xs font-extrabold line-clamp-1 w-full">
+                <span className="mt-2.5 text-[11px] sm:text-xs font-extrabold line-clamp-1 w-full">
                   {t.allSkills}
                 </span>
                 <span
@@ -187,7 +196,7 @@ export function ClientDirectory({
                 </span>
               </button>
 
-              {/* Tiles 1-10: Individual Trade Icons */}
+              {/* Tiles 1-10: Distinct, Tasteful Trade Category Icons */}
               {skillsList.map((skill) => {
                 const active = selectedSkill === skill.slug;
                 const config = TRADE_ICON_CONFIG[skill.slug] || TRADE_ICON_CONFIG["ALL"];
@@ -209,22 +218,22 @@ export function ClientDirectory({
                     type="button"
                     key={skill.id}
                     onClick={() => setSelectedSkill(active ? "ALL" : skill.slug)}
-                    className={`group flex flex-col items-center justify-center rounded-2xl border-2 p-2.5 sm:p-4 text-center transition-all ${
+                    className={`group flex flex-col items-center justify-center rounded-2xl border-2 p-3 sm:p-4 text-center transition-all ${
                       active
-                        ? "border-[#0170B9] bg-[#0170B9] text-white shadow-md ring-2 ring-[#0170B9]/20 scale-[1.02]"
-                        : "border-slate-200/90 bg-white text-slate-800 hover:border-[#0170B9]/60 hover:shadow-xs"
+                        ? "border-[#0170B9] bg-[#0170B9] text-white shadow-md ring-2 ring-[#0170B9]/20 -translate-y-0.5"
+                        : "border-slate-200/90 bg-white text-slate-800 hover:border-slate-300 hover:shadow-xs hover:-translate-y-0.5"
                     }`}
                   >
                     <div
-                      className={`flex h-11 w-11 sm:h-14 sm:w-14 items-center justify-center rounded-xl sm:rounded-2xl transition-all ${
+                      className={`flex h-12 w-12 sm:h-14 sm:w-14 items-center justify-center rounded-2xl transition-all shadow-xs border ${
                         active
-                          ? "bg-white/20 text-white"
-                          : "bg-blue-50 text-[#0170B9] group-hover:scale-105"
+                          ? "bg-white/20 text-white border-white/30"
+                          : `${config.iconBg} ${config.iconColor} group-hover:scale-105`
                       }`}
                     >
                       <SkillIcon className="h-6 w-6 sm:h-7 sm:w-7" />
                     </div>
-                    <span className="mt-2 text-[11px] sm:text-xs font-extrabold line-clamp-1 w-full">
+                    <span className="mt-2.5 text-[11px] sm:text-xs font-extrabold line-clamp-1 w-full">
                       {displayName}
                     </span>
                     <span
